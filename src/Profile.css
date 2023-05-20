@@ -1,0 +1,28 @@
+.profile {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	margin: 16px;
+	margin-bottom: 0;
+	box-shadow: 0 0 0 1px #e0e0e0;
+	padding: 4px;
+	width: calc(100% - 44px);
+	height: 32px;
+	background-color: white;
+	font-size: 12pt;
+	transition: all ease 0.5s;
+}
+.profile:hover {
+	box-shadow: 0 0 0 4px #e0e0ff;
+}
+.profile img {
+	border-radius: 50%;
+	width: 32px;
+	height: 32px;
+}
+.profile h1 {
+	margin-right: 8px;
+	font-weight: 400;
+	font-size: 12pt;
+}

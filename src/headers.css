@@ -1,0 +1,13 @@
+.text-container {
+	margin-left: 16px;
+	margin-right: 16px;
+	width: calc(100% - 32px);
+}
+h1.section {
+	font-size: 12pt;
+}
+h1.hint {
+	font-size: 8pt;
+	color: #808080;
+	text-align: right;
+}

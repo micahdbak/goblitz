@@ -7,6 +7,8 @@ import {
 import "./index.css";
 
 import App from "./App.js";
+import Nav from "./Nav.js";
+import Pro from "./Pro.js";
 
 const router = createBrowserRouter([
 	{
@@ -18,6 +20,16 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<React.StrictMode>
-		<RouterProvider router={router} />
+		<div className="container">
+			<div className="left">
+				<Nav />
+			</div>
+			<div className="centre">
+				<RouterProvider router={router} />
+			</div>
+			<div className="right">
+				<Pro />
+			</div>
+		</div>
 	</React.StrictMode>
 );
