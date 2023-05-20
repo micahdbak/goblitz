@@ -1,4 +1,5 @@
 import "./Post.css";
+import "./buttons.css";
 
 // props:
 // image; title; author; date
@@ -9,6 +10,9 @@ export default function Post(props) {
 			<h1>{props.title}</h1>
 			<h2>{props.author}</h2>
 			<h3>{props.date}</h3>
+			<div className="">
+				<button>button</button>
+			</div>
 		</div>
 	);
 }
