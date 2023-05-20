@@ -1,0 +1,24 @@
+.post {
+	margin: 16px;
+	padding: 16px;
+	width: fit-content;
+	background-color: white;
+	line-height: 8px;
+}
+.post img {
+	width: 512px;
+}
+.post h1 {
+	font-size: 20pt;
+	font-weight: 800;
+}
+.post h2 {
+	font-size: 14pt;
+	font-weight: 400;
+	color: #808080;
+}
+.post h3 {
+	font-size: 10pt;
+	font-weight: 400;
+	color: #808080;
+}

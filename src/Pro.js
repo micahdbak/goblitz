@@ -1,4 +1,5 @@
 import Profile from "./Profile.js";
+import "./containers.css";
 import "./buttons.css";
 import "./headers.css";
 
@@ -6,7 +7,7 @@ const DOG_IMG = "https://imagesvc.meredithcorp.io/v3/mm/image?q=60&c=sc&poi=%5B9
 
 export default function Pro() {
 	return (
-		<>
+		<div className="container-fixed">
 			<Profile image={DOG_IMG} name="Micah Baker" />
 			<div className="btn-row">
 				<button className="row-btn sm primary">
@@ -16,21 +17,21 @@ export default function Pro() {
 					View Profile
 				</button>
 			</div>
-			<div className="text-container">
+			<div className="container-text">
 				<h1 className="section">Following</h1>
 			</div>
 			<Profile image={DOG_IMG} name="Nakul Bansal" />
 			<Profile image={DOG_IMG} name="Simon Purdon" />
 			<Profile image={DOG_IMG} name="Akki Singh" />
-			<div className="text-container">
+			<div className="container-text">
 				<h1 className="hint">Click to view more</h1>
 			</div>
-			<div className="text-container">
+			<div className="container-text">
 				<h1 className="section">Recents</h1>
 			</div>
 			<Profile image={DOG_IMG} name="Nakul Bansal" />
 			<Profile image={DOG_IMG} name="Nakul Bansal" />
 			<Profile image={DOG_IMG} name="Nakul Bansal" />
-		</>
+		</div>
 	);
 }

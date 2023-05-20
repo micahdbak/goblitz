@@ -6,8 +6,8 @@ import {
 } from "react-router-dom";
 import "./index.css";
 
-import App from "./App.js";
 import Nav from "./Nav.js";
+import App from "./App.js";
 import Pro from "./Pro.js";
 
 const router = createBrowserRouter([

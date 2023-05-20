@@ -1,0 +1,10 @@
+.container-fixed {
+	position: fixed;
+	top: 0;
+	width: inherit;
+}
+.container-text {
+	margin-left: 16px;
+	margin-right: 16px;
+	width: calc(100% - 32px);
+}

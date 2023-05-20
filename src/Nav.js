@@ -1,8 +1,9 @@
+import "./containers.css";
 import "./buttons.css";
 
 export default function Nav() {
 	return (
-		<>
+		<div className="container-fixed">
 			<button className="glyptodon">
 				Glyptodon
 			</button>
@@ -15,6 +16,6 @@ export default function Nav() {
 			<button className="secondary">
 				Explore
 			</button>
-		</>
+		</div>
 	);
 }
