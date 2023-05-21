@@ -26,7 +26,7 @@ export default function Post(props) {
 	});
 	return (
 		<div className="post">
-			<img src={props.image} alt={props.title}/>
+			<a href="/post"><img src={props.image} alt={props.title}/></a>
 				<div className="post-description">
 				<div>
 					<h1>{props.title}</h1>
@@ -36,7 +36,10 @@ export default function Post(props) {
 				<div className="like_button">
 					<button className="btn" onClick={handleClick}>
 						<p>{likeCount} like{plural} </p>
-						<img src={curSymb} onClick={handleClick}/>
+						<img 
+							src={curSymb} 
+							onClick={handleClick}
+						/>
 					</button>
 				</div>
 			</div>

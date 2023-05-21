@@ -1,0 +1,58 @@
+.post-focused {
+	margin: auto;
+	margin-top: 16px;
+	padding: 16px;
+	width: fit-content;
+	background-color:white;
+	line-height: 8px;
+}
+
+.post-display{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 90%;
+	background-color:white;
+	padding: 10px 10px 10px;
+	margin:auto;
+}
+
+.post-display img {
+	border-radius: 5px;
+}
+
+.go-back-button {
+	float:left;
+	width:20%;
+	border-radius: 5px;
+}
+
+h1 {
+	text-align:center;
+}
+
+.focused button {
+	width:60px;
+	height:60px;
+	margin-right:5px;
+}
+
+.focused{
+	width:50px;
+	height:50px;
+	margin-right:5px;
+}
+
+.focused:hover {
+	transform: scale(1.03, 1.03);
+}
+
+.inter-button {
+	margin-right:8px;
+}
+
+.btn-row {
+	display: flex;
+	justify-content:left;
+	align-items:left;
+}

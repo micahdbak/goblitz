@@ -8,6 +8,7 @@ import { CookiesProvider } from "react-cookie";
 import "./styles/index.css";
 
 import Nav from "./Nav.js";
+import PostFull from "./PostFull.js";
 
 import { App, loadPosts } from "./routes/App.js";
 import Login from "./routes/Login.js";
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
 	{
 		path: "/create",
 		element: <Create />
+	},
+	{
+		path: "/post",
+		element: <PostFull image="https://random.dog/c8b7a017-8966-4f84-b2c6-609a739d833e.jpg" title="Test" author="Simon" date="Today" />
 	}
 ]);
 
