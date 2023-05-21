@@ -18,16 +18,16 @@
 	font-size: 10pt;
 	font-weight: 400;
 }
-.form-container input[type=text] {
+.form-container input[type=text], .form-container textarea {
 	border: 0;
 	box-shadow: 0 0 0 1px gray;
 	padding: 4px;
 	transition: all ease 0.5s;
 }
-.form-container input[type=text]:hover {
+.form-container input[type=text]:hover, .form-container textarea:hover {
 	box-shadow: 0 0 0 2px #808080;
 }
-.form-container input[type=text]:focus {
+.form-container input[type=text]:focus, .form-container textarea:focus {
 	outline: none;
 	box-shadow: 0 0 0 4px #8080ff;
 }

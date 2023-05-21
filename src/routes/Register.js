@@ -4,7 +4,7 @@ import "../styles/buttons.css";
 export default function Register() {
 	return (
 		<div className="form-container">
-			<h1>Login</h1>
+			<h1>Register</h1>
 			<hr />
 			<form action="/api/create/user" method="post">
 				<p>User Name:</p>

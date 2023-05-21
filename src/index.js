@@ -12,6 +12,7 @@ import Nav from "./Nav.js";
 import { App, loadPosts } from "./routes/App.js";
 import Login from "./routes/Login.js";
 import Register from "./routes/Register.js";
+import Create from "./routes/Create.js";
 
 const router = createBrowserRouter([
 	{
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
 	{
 		path: "/register",
 		element: <Register />
+	},
+	{
+		path: "/create",
+		element: <Create />
 	}
 ]);
 

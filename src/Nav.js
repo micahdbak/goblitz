@@ -23,7 +23,7 @@ export default function Nav() {
 			</button>
 		</>) :
 		(<>
-			<button className="nav-icon">
+			<button className="nav-icon" onClick={() => {location.href="/create"}}>
 				<p>+</p>
 				<h1>Make Post</h1>
 			</button>
@@ -39,10 +39,6 @@ export default function Nav() {
 				<button className="nav-icon" onClick={() => {location.href="/"}}>
 					<p>🏠</p>
 					<h1>Home</h1>
-				</button>
-				<button className="nav-icon">
-					<p>🌎</p>
-					<h1>Explore</h1>
 				</button>
 			</div>
 			<h1 className="nav-glyptodon">
