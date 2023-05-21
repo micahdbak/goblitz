@@ -5,10 +5,13 @@
 The following are for HTTP GETs:
 
 `/api/posts` returns all posts visible to the user.
+
 `/api/post/<PID>` returns the information associated with a specific post.
+
 `/api/comments/<PID>` returns all comments on a post
 
 `/api/users.json` returns all users known to the user.
+
 `/api/user/<UID>` returns the information associated with a specific user.
 
 The following are for HTTP POSTs:
@@ -18,7 +21,7 @@ The following are for HTTP POSTs:
 Which expects JSON with at least the following field set:
 
 ```json
-"Creating": "Post" / "Comment" / "User"
+"Creating": "Post / Comment / User"
 ```
 
 When you are creating a post, the following must be posted:
@@ -42,6 +45,7 @@ When you are creating a comment, the following must be posted:
     "User": "UID (Pre-existing)",
     "Text": "This is the comment itself."
 }
+```
 
 When you are creating a user, the following must be posted:
 
