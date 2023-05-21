@@ -1,78 +1,106 @@
+hr {
+	border: 0;
+	border-bottom: 1px solid lightgray;
+}
+.post-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: row;
+	flex-wrap: wrap;
+	margin-top: 64px;
+	width: 100%;
+}
 .post {
-	margin-top: 16px;
-	padding: 16px;
-	width: 256px;
+	margin: 8px;
+	border: 1px solid lightgray;
+	padding: 8px;
+	height: 384px;
 	background-color: white;
-	line-height: 8px; 
-	transition: 0.1s;
-	margin-left: 4px;
-	margin-right: 4px;
-	height:fit-content;
-
+}
+.post:hover {
+	z-index: 1;
+	cursor: pointer;
 }
 .post img {
-	width: 256px;
-	transition: 0.1s;
-}
-
-.post img:hover {
-	transform: scale(1.02, 1.02);
-}
-
-.post:hover {
-	transform: scale(1.02,1.02);
-}
-.post a {
-	text-decoration: none;
-}
-.post a:link {
-	color: black;
-}
-.post a:visited{
-	color: black;
+	min-width: 224px;
+	max-width: 512px;
+	height: 256px;
+	background-color: #e0e0e0;
 }
 .post h1 {
-	line-height: 1;
-	font-size: 20pt;
-	font-weight: 800;
+	margin: auto;
+	max-width: 224px;
+	font-family: 'Noto Sans', sans-serif;
+	font-weight: 900;
+	font-size: 14pt;
+	line-height: 16px;
 }
 .post h2 {
-	font-size: 14pt;
 	font-weight: 400;
-	color: #808080;
+	font-size: 12pt;
+	line-height: 8px;
+}
+.post span.UID {
+	color: gray;
 }
 .post h3 {
-	font-size: 10pt;
 	font-weight: 400;
-	color: #808080;
+	font-size: 10pt;
+	line-height: 8px;
 }
-
-.post button {	
-	display: flex;
-	justify-content:center;
-	width: auto;
-	height: auto;
-	margin-left: auto;
-}
-
-.post-description {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: top;
-}
-
 .like_button button img {
 	width: 50px;
 	height: 50px;
 	justify-content: center;
 }
-
 .like_button {
 	transition: 0.1s;
 	margin-left: 5px;
 }
-
 .like_button:hover {
 	transform: scale(1.02, 1.02);
+}
+.post-large-container {
+	margin: auto;
+	margin-top: 64px;
+	margin-bottom: 50vh;
+	border: 1px solid lightgray;
+	padding: 16px;
+	max-width: 768px;
+	background-color: white;
+}
+.post-large-container img {
+	margin-bottom: 16px;
+	width: 100%;
+}
+.post-large-container .space-between {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	width: 100%;
+}
+.post-large-container h1 {
+	margin: 0;
+	text-align: center;
+	font-family: 'Noto Sans', sans-serif;
+	font-weight: 900;
+	font-size: 20pt;
+}
+.post-large-container h2 {
+	margin: 0;
+	font-weight: 400;
+	font-size: 16pt;
+}
+.post-large-container span.UID {
+	color: gray;
+}
+.post-large-container h3 {
+	margin: 0;
+	font-size: 14pt;
+}
+.post-large-container p {
+	font-size: 12pt;
 }

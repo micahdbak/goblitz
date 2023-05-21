@@ -1,0 +1,23 @@
+.comment {
+	border-bottom: 1px solid lightgray;
+	width: 100%;
+	background-color: white;
+}
+.comment:target {
+	background-color: #f0f0f0;
+}
+.comment p {
+	font-family: 'Source Sans Pro', sans-serif;
+	font-weight: 400;
+	font-size: 12pt;
+}
+.comment p span.Name {
+	text-decoration: underline;
+}
+.comment p span.UID {
+	color: gray;
+}
+.comment-box {
+	width: 100%;
+	margin-top: 16px;
+}

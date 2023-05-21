@@ -10,6 +10,7 @@ import (
 )
 
 const (
+	BASE_URL = "http://localhost:3000"
 	DOG1 = "https://random.dog/1326984c-39b0-492c-a773-f120d747a7e2.jpg"
 	DOG2 = "https://random.dog/1abd3cbd-d6db-435b-9218-a9b6a26be50b.JPG"
 	DOG3 = "https://random.dog/5d6792a5-a458-4077-b9ee-de7f15706cca.jpg"
@@ -28,6 +29,7 @@ type User struct {
 }
 
 type Comment struct {
+	CID int
 	UID int
 	Text string
 }
@@ -73,6 +75,10 @@ func main() {
 	log.Fatal(e.Start(":8000"))
 }
 
+func testPost(c echo.Context) error {
+	return c.Redirect(http.StatusFound, "https://google.com")
+}
+
 func notFound(c echo.Context) error {
 	return echo.NewHTTPError(http.StatusNotFound)
 }
@@ -111,7 +117,11 @@ func getUser(c echo.Context) error {
 
 func createPost(c echo.Context) error {
 	var newPost Post
-	newPost.UID, _ = strconv.Atoi(c.FormValue("UID"))
+	var err error
+	newPost.UID, err = strconv.Atoi(c.FormValue("UID"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest)
+	}
 	newPost.Image = c.FormValue("Image")
 	newPost.Title = c.FormValue("Title")
 	newPost.Text = c.FormValue("Text")
@@ -119,19 +129,30 @@ func createPost(c echo.Context) error {
 	newPost.Date = "Today"
 	newPost.Comments = nil
 	post = append(post, newPost)
-	return c.String(http.StatusOK, strconv.Itoa(newPost.PID))
+	postUrl := BASE_URL + "/post/" + strconv.Itoa(newPost.PID)
+	return c.Redirect(http.StatusFound, postUrl)
 }
 
 func createComment(c echo.Context) error {
 	var newComment Comment
-	PID, _ := strconv.Atoi(c.FormValue("PID"))
-	newComment.UID, _ = strconv.Atoi(c.FormValue("UID"))
+	PID, err := strconv.Atoi(c.FormValue("PID"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest)
+	}
+	newComment.UID, err = strconv.Atoi(c.FormValue("UID"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest)
+	}
 	newComment.Text = c.FormValue("Text")
 	if post[PID].Comments == nil {
 		post[PID].Comments = make([]Comment, 0)
 	}
+	newComment.CID = len(post[PID].Comments)
 	post[PID].Comments = append(post[PID].Comments, newComment)
-	return c.String(http.StatusOK, strconv.Itoa(PID))
+	postUrl := BASE_URL
+	postUrl += "/post/" + strconv.Itoa(PID)
+	postUrl += "#" + strconv.Itoa(newComment.CID)
+	return c.Redirect(http.StatusFound, postUrl)
 }
 
 func createUser(c echo.Context) error {
@@ -141,5 +162,6 @@ func createUser(c echo.Context) error {
 	newUser.UID = len(user)
 	newUser.Date = "Today"
 	user = append(user, newUser)
-	return c.String(http.StatusOK, strconv.Itoa(newUser.UID))
+	userUrl := BASE_URL + "/user/" + strconv.Itoa(newUser.UID)
+	return c.Redirect(http.StatusFound, userUrl)
 }

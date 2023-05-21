@@ -5,7 +5,7 @@ import Post from "../Post.js";
 import "../styles/buttons.css";
 
 export const loadPosts = async () => {
-	var jsonData = {};
+	let jsonData = {};
 
 	const posts = await fetch("/api/posts");
 	const users = await fetch("/api/users");
@@ -16,17 +16,18 @@ export const loadPosts = async () => {
 	return jsonData;
 };
 
-export function App() {
+export function Home() {
 	const jsonData = useLoaderData();
-
 	return (
-		<>
+		<div className="post-container">
 			{ jsonData["posts"].map(p =>
-				<Post image={p["Image"]}
-				      title={p["Title"]}
-				      author={p["Author"]}
-				      date={p["Date"]} />)
-			}
-		</>
+				<Post PID={p["PID"]}
+				      Image={p["Image"]}
+				      Title={p["Title"]}
+				      Users={jsonData["users"]}
+				      UID={p["UID"]}
+				      Date={p["Date"]} />
+			)}
+		</div>
 	);
 }

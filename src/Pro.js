@@ -2,7 +2,6 @@ import { useCookies } from "react-cookie";
 
 import Profile from "./Profile.js";
 
-import "./styles/containers.css";
 import "./styles/buttons.css";
 import "./styles/headers.css";
 import "./styles/Pro.css";

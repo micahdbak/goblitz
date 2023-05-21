@@ -1,0 +1,17 @@
+.com-container {
+	position: fixed;
+	bottom: 8px;
+	left: 50%;
+	border: 1px solid lightgray;
+	padding: 16px;
+	width: fit-content;
+	height: fit-content;
+	background-color: white;
+	filter: drop-shadow(0 0 8px #00000040);
+	transform: translateX(-50%);
+}
+.com-container h1 {
+	font-weight: 400;
+	font-size: 14pt;
+	text-align: center;
+}

@@ -6,30 +6,33 @@
 	width: fit-content;
 	background-color: white;
 }
-.form-container h1 {
+form h1 {
 	font-size: 16pt;
 	font-weight: 400;
 }
-.form-container h2 {
+form h2 {
 	font-size: 14pt;
 	font-weight: 400;
 }
-.form-container p {
+form p {
 	font-size: 10pt;
 	font-weight: 400;
 }
-.form-container input[type=text], .form-container textarea {
+form input[type=text], form textarea {
 	border: 0;
 	box-shadow: 0 0 0 1px gray;
 	padding: 4px;
 	transition: all ease 0.5s;
 }
-.form-container input[type=text]:hover, .form-container textarea:hover {
+form input[type=text]:hover, form textarea:hover {
 	box-shadow: 0 0 0 2px #808080;
 }
-.form-container input[type=text]:focus, .form-container textarea:focus {
+form input[type=text]:focus, form textarea:focus {
 	outline: none;
 	box-shadow: 0 0 0 4px #8080ff;
+}
+textarea.resize-none {
+	resize: none;
 }
 p.message {
 	background-color: #f0f0e0;

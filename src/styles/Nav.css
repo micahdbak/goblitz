@@ -51,6 +51,7 @@ button.nav-icon:hover {
 	padding-right: 8px;
 	box-shadow: 0 0 0 2px #808080;
 	color: black;
+	cursor: pointer;
 }
 button.nav-icon:active {
 	background-color: #e0e0e0;
@@ -75,6 +76,7 @@ button.nav-icon-active {
 }
 button.nav-icon-active:hover {
 	box-shadow: 0 0 0 2px #808080;
+	cursor: pointer;
 }
 button.nav-icon-active:active {
 	background-color: #e0e0e0;
