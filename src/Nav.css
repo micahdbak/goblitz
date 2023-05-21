@@ -1,0 +1,118 @@
+.nav-container-fixed {
+	position: fixed;
+	top: 0;
+	z-index: 2;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid lightgray;
+	padding: 8px;
+	width: calc(100% - 16px);
+	height: 32px;
+	background-color: white;
+}
+.nav-glyptodon {
+	position: fixed;
+	left: 50%;
+	transform: translateX(-50%);
+	font-weight: 800;
+	font-size: 16pt;
+}
+.nav-group {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	width: fit-content;
+}
+button.nav-icon {
+	display: flex;
+	overflow: hidden;
+	justify-content: center;
+	align-items: center;
+	margin: 4px;
+	border: 0;
+	border-radius: 20px;
+	padding: 0;
+	width: 32px;
+	height: 32px;
+	box-shadow: 0 0 0 1px black;
+	background-color: white;
+	transition: all ease 0.5s;
+}
+button.nav-icon:hover {
+	width: 128px;
+	box-shadow: 0 0 0 2px #808080;
+	color: black;
+}
+button.nav-icon:active {
+	background-color: #e0e0e0;
+	transition: none;
+}
+button.nav-icon-active {
+	display: flex;
+	overflow: hidden;
+	justify-content: center;
+	align-items: center;
+	margin: 4px;
+	border: 0;
+	border-radius: 20px;
+	padding: 0;
+	width: 128px;
+	height: 32px;
+	box-shadow: 0 0 0 1px black;
+	background-color: #ffffff;
+	color: black;
+	transition: all ease 0.5s;
+}
+button.nav-icon-active:hover {
+	box-shadow: 0 0 0 2px #808080;
+}
+button.nav-icon-active:active {
+	background-color: #e0e0e0;
+	transition: none;
+}
+/* emoji */
+button.nav-icon p {
+	visibility: visible;
+	width: initial;
+	font-size: 12pt;
+	filter: opacity(1);
+	transition: all ease 0.5s;
+}
+button.nav-icon:hover p, button.nav-icon-active p {
+	visibility: hidden;
+	width: 0;
+	filter: opacity(0);
+}
+button.nav-icon h1 {
+	visibility: hidden;
+	width: 0;
+	font-size: 12pt;
+	font-weight: 400;
+	white-space: nowrap;
+	filter: opacity(0);
+	transition: none;
+}
+button.nav-icon:hover h1, button.nav-icon-active h1 {
+	visibility: visible;
+	width: initial;
+	font-size: 12pt;
+	font-weight: 400;
+	white-space: nowrap;
+	filter: opacity(1);
+	transition: all ease 0.5s;
+}
+button.nav-icon img {
+	width: 32px;
+}
+.nav-profile {
+	position: fixed;
+	top: 40px;
+	right: 8px;
+	z-index: 2;
+	width: 512px;
+	height: 512px;
+	background-color: white;
+}

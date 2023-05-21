@@ -33,7 +33,7 @@ export default function Post(props) {
 					<h3>{props.date}</h3>
 				</div>
 				<div className="like_button">
-					<button onClick={handleClick}>
+					<button className="btn" onClick={handleClick}>
 						<p>{likeCount} like{plural} </p>
 						<img src={curSymb} onClick={handleClick}/>
 					</button>

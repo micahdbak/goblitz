@@ -4,6 +4,7 @@ import {
 	createBrowserRouter,
 	RouterProvider,
 } from "react-router-dom";
+import { CookiesProvider } from "react-cookie";
 import "./index.css";
 
 import Nav from "./Nav.js";
@@ -22,16 +23,9 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<React.StrictMode>
-		<div className="container">
-			<div className="left">
-				<Nav />
-			</div>
-			<div className="centre">
-				<RouterProvider router={router} />
-			</div>
-			<div className="right">
-				<Pro />
-			</div>
-		</div>
+		<CookiesProvider>
+			<Nav />
+			<RouterProvider router={router} />
+		</CookiesProvider>
 	</React.StrictMode>
 );

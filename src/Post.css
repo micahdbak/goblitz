@@ -2,14 +2,14 @@
 	margin: auto;
 	margin-top: 16px;
 	padding: 16px;
-	width: fit-content;
+	width: 256;
 	background-color: white;
 	line-height: 8px; 
 	transition: 0.1s;
 
 }
 .post img {
-	width: 512px;
+	width: 256px;
 	transition: 0.1s;
 }
 
