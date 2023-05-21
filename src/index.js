@@ -7,12 +7,14 @@ import {
 import "./index.css";
 
 import Nav from "./Nav.js";
-import App from "./App.js";
 import Pro from "./Pro.js";
+
+import { App, loadPosts } from "./App.js";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
+		loader: loadPosts,
 		element: <App />
 	}
 ]);

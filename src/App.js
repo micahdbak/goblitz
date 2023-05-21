@@ -1,13 +1,35 @@
+import { useLoaderData } from "react-router-dom";
+import { useCallback, useState } from "react";
+
 import Post from "./Post.js";
+import "./buttons.css";
 
-const MOUNTAIN = "https://hips.hearstapps.com/hmg-prod/images/beautiful-landscape-view-of-fuji-mountain-in-royalty-free-image-1623253648.jpg";
+export const loadPosts = async () => {
+	const response = await fetch("/api/posts.json");
+	const jsonData = await response.json();
 
-export default function App() {
+	return jsonData;
+};
+
+export function App() {
+	const posts = useLoaderData();
+	/*
+	const [posts, setPosts] = useState(null);
+	const doFetch = useCallback(async () => {
+		const response = await fetch("/api/posts.json");
+		const jsonData = await response.json();
+
+		setPosts(jsonData);
+	}); */
+
 	return (
 		<>
-			<Post image={MOUNTAIN} title="Beautiful B.C. aslkjdfawkljhsdklfjhaskljsdhflkawjhslkdjfhawlk" author="Micah Baker" date="Today" />
-			<Post image={MOUNTAIN} title="Beautiful B.C." author="Micah Baker" date="Today" />
-			<Post image={MOUNTAIN} title="Beautiful B.C." author="Micah Baker" date="Today" />
+			{ posts.map(p =>
+				<Post image={p["Image"]}
+				      title={p["Title"]}
+				      author={p["Author"]}
+				      date={p["Date"]} />)
+			}
 		</>
 	);
 }

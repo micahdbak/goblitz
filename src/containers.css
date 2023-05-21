@@ -2,6 +2,8 @@
 	position: fixed;
 	top: 0;
 	width: inherit;
+	height: 100vh;
+	background-color: inherit;
 }
 .container-text {
 	margin-left: 16px;
