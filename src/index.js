@@ -5,18 +5,27 @@ import {
 	RouterProvider,
 } from "react-router-dom";
 import { CookiesProvider } from "react-cookie";
-import "./index.css";
+import "./styles/index.css";
 
 import Nav from "./Nav.js";
-import Pro from "./Pro.js";
 
-import { App, loadPosts } from "./App.js";
+import { App, loadPosts } from "./routes/App.js";
+import Login from "./routes/Login.js";
+import Register from "./routes/Register.js";
 
 const router = createBrowserRouter([
 	{
 		path: "/",
 		loader: loadPosts,
 		element: <App />
+	},
+	{
+		path: "/login",
+		element: <Login />
+	},
+	{
+		path: "/register",
+		element: <Register />
 	}
 ]);
 
@@ -25,7 +34,9 @@ root.render(
 	<React.StrictMode>
 		<CookiesProvider>
 			<Nav />
-			<RouterProvider router={router} />
+			<div class="container">
+				<RouterProvider router={router} />
+			</div>
 		</CookiesProvider>
 	</React.StrictMode>
 );

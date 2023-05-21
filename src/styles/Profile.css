@@ -3,11 +3,10 @@
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
-	margin: 16px;
 	margin-bottom: 0;
 	box-shadow: 0 0 0 1px #e0e0e0;
 	padding: 4px;
-	width: calc(100% - 44px);
+	width: calc(100% - 8px);
 	height: 32px;
 	background-color: white;
 	font-size: 12pt;

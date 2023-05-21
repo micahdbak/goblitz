@@ -29,7 +29,7 @@ type User struct {
 
 type Comment struct {
 	UID int
-	Comment string
+	Text string
 }
 
 type Post struct {
@@ -64,6 +64,9 @@ func main() {
 	e.GET("/api/comments/:PID", getComments)
 	e.GET("/api/users", getUsers)
 	e.GET("/api/user/:UID", getUser)
+	e.POST("/api/create/post", createPost)
+	e.POST("/api/create/comment", createComment)
+	e.POST("/api/create/user", createUser)
 
 	fmt.Print("Starting Glyptodon Go Backend...")
 
@@ -104,4 +107,39 @@ func getUser(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusNotFound)
 	}
 	return c.JSON(http.StatusOK, user[i])
+}
+
+func createPost(c echo.Context) error {
+	var newPost Post
+	newPost.UID, _ = strconv.Atoi(c.FormValue("UID"))
+	newPost.Image = c.FormValue("Image")
+	newPost.Title = c.FormValue("Title")
+	newPost.Text = c.FormValue("Text")
+	newPost.PID = len(post)
+	newPost.Date = "Today"
+	newPost.Comments = nil
+	post = append(post, newPost)
+	return c.String(http.StatusOK, strconv.Itoa(newPost.PID))
+}
+
+func createComment(c echo.Context) error {
+	var newComment Comment
+	PID, _ := strconv.Atoi(c.FormValue("PID"))
+	newComment.UID, _ = strconv.Atoi(c.FormValue("UID"))
+	newComment.Text = c.FormValue("Text")
+	if post[PID].Comments == nil {
+		post[PID].Comments = make([]Comment, 0)
+	}
+	post[PID].Comments = append(post[PID].Comments, newComment)
+	return c.String(http.StatusOK, strconv.Itoa(PID))
+}
+
+func createUser(c echo.Context) error {
+	var newUser User
+	newUser.Name = c.FormValue("Name")
+	newUser.Image = c.FormValue("Image")
+	newUser.UID = len(user)
+	newUser.Date = "Today"
+	user = append(user, newUser)
+	return c.String(http.StatusOK, strconv.Itoa(newUser.UID))
 }

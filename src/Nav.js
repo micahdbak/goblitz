@@ -3,15 +3,15 @@ import { useCookies } from "react-cookie";
 
 import Pro from "./Pro.js";
 
-import "./Nav.css";
-import "./buttons.css";
+import "./styles/Nav.css";
+import "./styles/buttons.css";
 
 export default function Nav() {
-	const [cookies, setCookie, removeCookie] = useCookies(["UID"]);
+	const [cookies, setCookie, removeCookie] = useCookies(["user_UID", "user_Image", "user_Name"]);
 	const [profileOpen, setProfileOpen] = useState(false);
 	const [loginOpen, setLoginOpen] = useState(false);
 	const [registerOpen, setRegisterOpen] = useState(false);
-	const userButtons = cookies['UID'] == null ?
+	const userButtons = cookies["user_UID"] == null ?
 		(<>
 			<button className="nav-icon" onClick={() => {location.href="/login"}}>
 				<p>🔐</p>
@@ -29,7 +29,7 @@ export default function Nav() {
 			</button>
 			<button className={profileOpen ? "nav-icon-active" : "nav-icon"}
 				onClick={() => {setProfileOpen(!profileOpen)}}>
-				<p>🤦</p>
+				<img src={cookies["user_Image"]} alt={cookies["user_Name"]} />
 				<h1>Profile</h1>
 			</button>
 		</>);

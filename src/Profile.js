@@ -1,4 +1,4 @@
-import "./Profile.css";
+import "./styles/Profile.css";
 
 // props:
 // image: image used for the profile picture

@@ -1,8 +1,0 @@
-.pro-container {
-	position: fixed;
-	top: 56px;
-	right: 8px;
-	width: 512px;
-	height: calc(100vh - 64px);
-	background-color: white;
-}

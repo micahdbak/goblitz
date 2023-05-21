@@ -1,6 +1,7 @@
-import "./Post.css";
-import "./buttons.css";
 import React, {useState, useCallback} from 'react';
+
+import "./styles/Post.css";
+import "./styles/buttons.css";
 
 const STAR_TRANSPARENT = "images/star.png";
 const STAR_YELLOW = "images/star_yellow.png";

@@ -1,0 +1,36 @@
+.form-container {
+	margin: auto;
+	margin-top: 64px;
+	border: 1px solid lightgray;
+	padding: 16px;
+	width: fit-content;
+	background-color: white;
+}
+.form-container h1 {
+	font-size: 16pt;
+	font-weight: 400;
+}
+.form-container h2 {
+	font-size: 14pt;
+	font-weight: 400;
+}
+.form-container p {
+	font-size: 10pt;
+	font-weight: 400;
+}
+.form-container input[type=text] {
+	border: 0;
+	box-shadow: 0 0 0 1px gray;
+	padding: 4px;
+	transition: all ease 0.5s;
+}
+.form-container input[type=text]:hover {
+	box-shadow: 0 0 0 2px #808080;
+}
+.form-container input[type=text]:focus {
+	outline: none;
+	box-shadow: 0 0 0 4px #8080ff;
+}
+p.message {
+	background-color: #f0f0e0;
+}

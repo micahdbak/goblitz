@@ -1,9 +1,8 @@
 import { useLoaderData } from "react-router-dom";
 import { useCallback, useState } from "react";
 
-import Post from "./Post.js";
-import "./containers.css";
-import "./buttons.css";
+import Post from "../Post.js";
+import "../styles/buttons.css";
 
 export const loadPosts = async () => {
 	var jsonData = {};
@@ -21,13 +20,13 @@ export function App() {
 	const jsonData = useLoaderData();
 
 	return (
-		<div className="container">
+		<>
 			{ jsonData["posts"].map(p =>
 				<Post image={p["Image"]}
 				      title={p["Title"]}
 				      author={p["Author"]}
 				      date={p["Date"]} />)
 			}
-		</div>
+		</>
 	);
 }

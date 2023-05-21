@@ -16,43 +16,31 @@ The following are for HTTP GETs:
 
 The following are for HTTP POSTs:
 
-`/api/create`
+`/api/create/post`
+`/api/create/comment`
+`/api/create/user`
 
-Which expects JSON with at least the following field set:
-
-```json
-"Creating": "Post / Comment / User"
-```
-
+Which expects form data.
 When you are creating a post, the following must be posted:
 
-```json
-{
-    "Creating": "Post",
-    "User": "UID (Pre-existing)"
-    "Image": "Image URL",
-    "Title": "Post Title",
-    "Text": "This is what this post is about!"
-}
+```
+UID="UID (Pre-existing)"
+Image="Image URL"
+Title="Post Title"
+Text="This is what this post is about!"
 ```
 
 When you are creating a comment, the following must be posted:
 
-```json
-{
-    "Creating": "Comment",
-    "Post": "PID (Pre-existing)",
-    "User": "UID (Pre-existing)",
-    "Text": "This is the comment itself."
-}
+```
+PID="PID (Pre-existing)"
+UID="UID (Pre-existing)"
+Text="This is the comment itself."
 ```
 
 When you are creating a user, the following must be posted:
 
-```json
-{
-    "Creating": "User",
-    "Name": "John Doe",
-    "Image": "Image URL",
-}
+```
+Name="John Doe"
+Image="Image URL"
 ```

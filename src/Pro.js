@@ -1,38 +1,31 @@
-import Profile from "./Profile.js";
-import "./containers.css";
-import "./buttons.css";
-import "./headers.css";
-import "./Pro.css";
+import { useCookies } from "react-cookie";
 
-const DOG_IMG = "https://imagesvc.meredithcorp.io/v3/mm/image?q=60&c=sc&poi=%5B900%2C533%5D&w=2000&h=1333&url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F47%2F2021%2F03%2F12%2Fpomeranian-white-puppy-921029690-2000.jpg";
+import Profile from "./Profile.js";
+
+import "./styles/containers.css";
+import "./styles/buttons.css";
+import "./styles/headers.css";
+import "./styles/Pro.css";
 
 export default function Pro() {
+	const [cookies, setCookie, removeCookie] = useCookies(["user_UID, user_Name, user_Image, user_Date"]);
+	const logOut = () => {
+		removeCookie("user_UID");
+		removeCookie("user_Name");
+		removeCookie("user_Image");
+		removeCookie("user_Date");
+
+		location.href = "/";
+	};
 	return (
 		<div className="pro-container">
-			<Profile image={DOG_IMG} name="Micah Baker" />
+			<Profile image={cookies["user_Image"]} name={cookies["user_Name"]} />
 			<div className="btn-row">
-				<button className="btn row-btn sm primary">
-					Edit Profile
-				</button>
-				<button className="btn row-btn sm secondary">
-					View Profile
+				<button className="btn primary"
+					onClick={logOut}>
+					Log Out
 				</button>
 			</div>
-			<div className="container-text">
-				<h1 className="section">Following</h1>
-			</div>
-			<Profile image={DOG_IMG} name="Nakul Bansal" />
-			<Profile image={DOG_IMG} name="Simon Purdon" />
-			<Profile image={DOG_IMG} name="Akki Singh" />
-			<div className="container-text">
-				<h1 className="hint">Click to view more</h1>
-			</div>
-			<div className="container-text">
-				<h1 className="section">Recents</h1>
-			</div>
-			<Profile image={DOG_IMG} name="Nakul Bansal" />
-			<Profile image={DOG_IMG} name="Nakul Bansal" />
-			<Profile image={DOG_IMG} name="Nakul Bansal" />
 		</div>
 	);
 }
