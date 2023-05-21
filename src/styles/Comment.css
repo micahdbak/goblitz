@@ -3,6 +3,14 @@
 	width: 100%;
 	background-color: white;
 }
+.comment img {
+	display: inline-block;
+	float: left;
+	margin-right: 8px;
+	border-radius: 12px;
+	width: 24px;
+	height: 24px;
+}
 .comment:target {
 	background-color: #f0f0f0;
 }

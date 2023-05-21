@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLoaderData } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 import Comment from "../Comment.js";
 import Com from "../Com.js";
@@ -31,6 +32,7 @@ export function View(props) {
 	const jsonData = useLoaderData();
 	const post = jsonData["post"];
 	const user = jsonData["users"][parseInt(jsonData["post"]["UID"])];
+	const [cookies, setCookie, removeCookie] = useCookies(["user_UID", "user_Image", "user_Name"]);
 	const [likeCount, setLikeCount] = useState(0);
 	const [liked, setLiked] = useState(false);
 	const [commenting, setCommenting] = useState(false);
@@ -73,6 +75,7 @@ export function View(props) {
 			<hr />
 			<div class="btn-row">
 				<button className="btn primary"
+				        disabled={cookies["user_UID"] == null}
 					onClick={() => {setCommenting(!commenting)}}>
 					Comment
 				</button>
@@ -83,13 +86,14 @@ export function View(props) {
 			</div>
 			<div className="comment-box">
 				{ post["Comments"] != null && post["Comments"].map(c =>
-					<Comment Name={jsonData["users"][parseInt(c["UID"])]["Name"]}
+					<Comment Image={jsonData["users"][parseInt(c["UID"])]["Image"]}
+					         Name={jsonData["users"][parseInt(c["UID"])]["Name"]}
 					         Text={c["Text"]}
 					         UID={c["UID"]}
 					         id={c["CID"]}/>)
 				}
 			</div>
-			{ commenting && <Com UID={user["UID"]} PID={post["PID"]} /> }
+			{ commenting && <Com UID={cookies["user_UID"]} PID={post["PID"]} /> }
 		</div>
 	);
 }
