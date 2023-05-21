@@ -5,26 +5,23 @@ import Post from "./Post.js";
 import "./buttons.css";
 
 export const loadPosts = async () => {
-	const response = await fetch("/api/posts.json");
-	const jsonData = await response.json();
+	var jsonData = {};
+
+	const posts = await fetch("/api/posts");
+	const users = await fetch("/api/users");
+
+	jsonData["posts"] = await posts.json();
+	jsonData["users"] = await users.json();
 
 	return jsonData;
 };
 
 export function App() {
-	const posts = useLoaderData();
-	/*
-	const [posts, setPosts] = useState(null);
-	const doFetch = useCallback(async () => {
-		const response = await fetch("/api/posts.json");
-		const jsonData = await response.json();
-
-		setPosts(jsonData);
-	}); */
+	const jsonData = useLoaderData();
 
 	return (
 		<>
-			{ posts.map(p =>
+			{ jsonData["posts"].map(p =>
 				<Post image={p["Image"]}
 				      title={p["Title"]}
 				      author={p["Author"]}
