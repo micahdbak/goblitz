@@ -6,6 +6,7 @@
 	background-color: white;
 	line-height: 8px; 
 	transition: 0.1s;
+
 }
 .post img {
 	width: 512px;
@@ -15,6 +16,7 @@
 	transform: scale(1.02,1.02);
 }
 .post h1 {
+	
 	font-size: 20pt;
 	font-weight: 800;
 }
