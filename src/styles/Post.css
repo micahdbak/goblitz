@@ -1,11 +1,13 @@
 .post {
-	margin: auto;
 	margin-top: 16px;
 	padding: 16px;
 	width: 256px;
 	background-color: white;
 	line-height: 8px; 
 	transition: 0.1s;
+	margin-left: 4px;
+	margin-right: 4px;
+	height:fit-content;
 
 }
 .post img {
@@ -20,8 +22,17 @@
 .post:hover {
 	transform: scale(1.02,1.02);
 }
+.post a {
+	text-decoration: none;
+}
+.post a:link {
+	color: black;
+}
+.post a:visited{
+	color: black;
+}
 .post h1 {
-	
+	line-height: 1;
 	font-size: 20pt;
 	font-weight: 800;
 }

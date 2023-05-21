@@ -29,7 +29,7 @@ export default function Post(props) {
 			<a href="/post"><img src={props.image} alt={props.title}/></a>
 				<div className="post-description">
 				<div>
-					<h1>{props.title}</h1>
+					<a href="/post"><h1>{props.title}</h1></a>
 					<h2>{props.author}</h2>
 					<h3>{props.date}</h3>
 				</div>
