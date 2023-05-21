@@ -8,8 +8,6 @@ The following are for HTTP GETs:
 
 `/api/post/<PID>` returns the information associated with a specific post.
 
-`/api/comments/<PID>` returns all comments on a post
-
 `/api/users.json` returns all users known to the user.
 
 `/api/user/<UID>` returns the information associated with a specific user.

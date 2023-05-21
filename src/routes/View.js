@@ -7,6 +7,7 @@ import Com from "../Com.js";
 
 import "../styles/buttons.css";
 import "../styles/Post.css";
+import "./View.css";
 
 const STAR_TRANSPARENT = "/images/star.png";
 const STAR_YELLOW = "/images/star_yellow.png";
@@ -52,8 +53,11 @@ export function View(props) {
 			<img src={post["Image"]}/>
 			<div className="space-between">
 				<h1>{post["Title"]}</h1>
+				<button className="post-username primary" onClick={() => {location.href="/user/" + post["UID"]}}>
+					{user["Name"]}
+				</button>
 				<h2>
-					{user["Name"]} <span className="UID">(UID: {post["UID"]})</span>,&nbsp;
+					<span className="UID">(UID: {post["UID"]})</span>,&nbsp;
 					{post["Date"]}
 				</h2>
 			</div>

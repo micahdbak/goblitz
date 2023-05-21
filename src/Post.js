@@ -30,7 +30,7 @@ export default function Post(props) {
 		<div className="post" onClick={() => {location.href = "/post/" + props["PID"]}}>
 			<img src={props["Image"]} alt={props["Title"]}/>
 			<h1>{props["Title"]}</h1>
-			<h2>
+			<h2 onClick={() => {location.href= "/user/" + props["UID"]}}>
 				{props.Users[parseInt(props["UID"])]["Name"]}&nbsp;
 				<span class="UID">(UID: {props["UID"]})</span>
 			</h2>

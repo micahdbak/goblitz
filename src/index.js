@@ -14,6 +14,7 @@ import { View, loadPost } from "./routes/View.js";
 import Login from "./routes/Login.js";
 import Register from "./routes/Register.js";
 import Create from "./routes/Create.js";
+import ProfileView, { loadProfiles } from "./routes/ProfileView.js";
 
 const router = createBrowserRouter([
 	{
@@ -37,6 +38,11 @@ const router = createBrowserRouter([
 		path: "/post/:PID",
 		loader: loadPost,
 		element: <View />
+	},
+	{
+		path: "/user/:UID",
+		loader: loadProfiles,
+		element: <ProfileView />
 	}
 ]);
 
