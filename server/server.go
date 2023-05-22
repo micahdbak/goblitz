@@ -70,7 +70,7 @@ func main() {
 	e.POST("/api/create/comment", createComment)
 	e.POST("/api/create/user", createUser)
 
-	fmt.Print("Starting Glyptodon Go Backend...")
+	fmt.Print("Starting Goblitz Backend...")
 
 	log.Fatal(e.Start(":8000"))
 }

@@ -41,8 +41,8 @@ export default function Nav() {
 					<h1>Home</h1>
 				</button>
 			</div>
-			<h1 className="nav-glyptodon">
-				Glyptodon
+			<h1 className="nav-goblitz">
+				goblitz.net
 			</h1>
 			<div className="nav-group">
 				{userButtons}

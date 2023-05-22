@@ -1,4 +1,4 @@
-module github.com/micahdbak/glyptodon/server
+module github.com/micahdbak/goblitz/server
 
 go 1.19
 
