@@ -1,20 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-	createBrowserRouter,
-	RouterProvider,
-} from "react-router-dom";
-import { CookiesProvider } from "react-cookie";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./styles/index.css";
 
-import Nav from "./Nav.js";
-
+import Header from "./components/Header.js";
 import { Home, loadPosts } from "./routes/Home.js";
 import { View, loadPost } from "./routes/View.js";
 import Login from "./routes/Login.js";
 import Register from "./routes/Register.js";
 import Create from "./routes/Create.js";
-import ProfileView, { loadProfiles } from "./routes/ProfileView.js";
+import ViewProfile, { loadProfiles } from "./routes/ViewProfile.js";
+import { Resolve, loadResolve } from "./routes/Resolve.js";
 
 const router = createBrowserRouter([
 	{
@@ -31,6 +27,11 @@ const router = createBrowserRouter([
 		element: <Register />
 	},
 	{
+		path: "/resolve/:UID",
+		loader: loadResolve,
+		element: <Resolve />
+	},
+	{
 		path: "/create",
 		element: <Create />
 	},
@@ -40,20 +41,18 @@ const router = createBrowserRouter([
 		element: <View />
 	},
 	{
-		path: "/user/:UID",
+		path: "/user/:link",
 		loader: loadProfiles,
-		element: <ProfileView />
+		element: <ViewProfile />
 	}
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<React.StrictMode>
-		<CookiesProvider>
-			<Nav />
-			<div class="container">
-				<RouterProvider router={router} />
-			</div>
-		</CookiesProvider>
+		<Header />
+		<div class="container">
+			<RouterProvider router={router} />
+		</div>
 	</React.StrictMode>
-);
+	);

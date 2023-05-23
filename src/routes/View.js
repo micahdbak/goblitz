@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, useLoaderData } from "react-router-dom";
-import { useCookies } from "react-cookie";
 
-import Post from "../Post.js";
-import Comment from "../Comment.js";
-import Com from "../Com.js";
+import Post from "../components/Post.js";
+import Comment from "../components/Comment.js";
+import MakeComment from "../components/MakeComment.js";
 
 import "../styles/buttons.css";
 import "../styles/View.css";
@@ -48,7 +47,6 @@ export function View(props) {
 
 	const user = users[parseInt(post["UID"])];
 
-	const [cookies, setCookie, removeCookie] = useCookies(["user_UID", "user_Image", "user_Name"]);
 	const [likeCount, setLikeCount] = useState(0);
 	const [liked, setLiked] = useState(false);
 	const [commenting, setCommenting] = useState(false);
@@ -79,7 +77,6 @@ export function View(props) {
 			</div>
 			<div class="btn-row">
 				<button className="btn primary"
-				        disabled={cookies["user_UID"] == null}
 					onClick={() => {setCommenting(!commenting)}}>
 					Comment
 				</button>
@@ -96,7 +93,7 @@ export function View(props) {
 					         id={c["CID"]}/>)
 				}
 			</div>
-			{ commenting && <Com UID={cookies["user_UID"]} PID={post["PID"]} /> }
+			{ commenting && <MakeComment PID={post["PID"]} /> }
 		</div>
 	);
 }

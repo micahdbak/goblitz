@@ -1,17 +1,13 @@
 import React, { useState, useCallback, useEffect } from 'react';
 
-import User from "./User.js";
-
-import "./styles/Post.css";
-import "./styles/buttons.css";
+import "../styles/Post.css";
+import "../styles/buttons.css";
 
 const STAR_TRANSPARENT = "images/star.png";
 const STAR_YELLOW = "images/star_yellow.png";
 
 export default function Post(props) {
 	const post = props["post"];
-	const UID = parseInt(post["UID"]);
-	const user = props.users[UID];
 	const handleClick = props.clickable ? () => {
 		location.href = "/post/" + post["PID"];
 	} : () => {};
@@ -23,7 +19,7 @@ export default function Post(props) {
 				setMark(mark - 1);
 		}, 1000);
 		return () => clearInterval(interval);
-	}, [mark]);
+	});
 
 	return (
 		<div className="post" onClick={handleClick}>
@@ -31,7 +27,7 @@ export default function Post(props) {
 				<img src={post["Image"]} alt={post["Title"]}/>
 			</div>
 			<h1 className="title">{post["Title"]}</h1>
-			<User user={user} />
+			<p className="text">{post["Text"]}</p>
 			<h3 className="mark">{mark}</h3>
 		</div>
 	);

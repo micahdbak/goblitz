@@ -1,8 +1,8 @@
-.com-container {
+.mkcom-container {
 	position: fixed;
 	bottom: 8px;
 	left: 50%;
-	border: 1px solid lightgray;
+	border: 1px solid black;
 	padding: 16px;
 	width: fit-content;
 	height: fit-content;
@@ -10,8 +10,14 @@
 	filter: drop-shadow(0 0 8px #00000040);
 	transform: translateX(-50%);
 }
-.com-container h1 {
+.mkcom-container h1 {
 	font-weight: 400;
 	font-size: 14pt;
 	text-align: center;
+}
+.mkcom-comtainer hr {
+	margin-top: 8px;
+	margin-bottom: 8px;
+	border: 0;
+	border-bottom: 1px solid black;
 }

@@ -1,11 +1,9 @@
-import { useCookies } from "react-cookie";
 import { useState, useRef } from "react";
 
 import "../styles/forms.css";
 import "../styles/buttons.css";
 
 export default function Login() {
-	const [cookies, setCookie, removeCookie] = useCookies(["user_UID, user_Name, user_Image, user_Date"]);
 	const [isLoggingIn, setIsLoggingIn] = useState(false);
 	const [message, setMessage] = useState("");
 	const inputRef = useRef(null);

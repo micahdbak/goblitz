@@ -1,4 +1,4 @@
-import "./styles/User.css";
+import "../styles/User.css";
 
 export default function User(props) {
 	const user = props.user;

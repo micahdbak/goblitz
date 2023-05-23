@@ -1,4 +1,4 @@
-.nav-container-fixed {
+.header-container {
 	position: fixed;
 	top: 0;
 	z-index: 2;
@@ -12,10 +12,17 @@
 	height: 32px;
 	background-color: white;
 }
-.nav-goblitz {
+.header-group-center {
 	position: fixed;
 	left: 50%;
 	transform: translateX(-50%);
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	width: fit-content;
+}
+h1.header-goblitz {
 	font-family: 'Noto Sans', sans-serif;
 	font-weight: 900;
 	font-size: 16pt;
@@ -23,14 +30,21 @@
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 }
-.nav-group {
+h2.header-remaining {
+	margin-left: 16px;
+	font-family: 'Noto Sans', sans-serif;
+	font-weight: 400;
+	font-size: 12pt;
+	color: gray;
+}
+.header-group {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: center;
 	width: fit-content;
 }
-button.nav-icon {
+button.header-icon {
 	display: flex;
 	overflow: hidden;
 	justify-content: center;
@@ -45,7 +59,7 @@ button.nav-icon {
 	background-color: white;
 	transition: all ease 0.5s;
 }
-button.nav-icon:hover {
+button.header-icon:hover {
 	width: 128px;
 	padding-left: 8px;
 	padding-right: 8px;
@@ -53,11 +67,11 @@ button.nav-icon:hover {
 	color: black;
 	cursor: pointer;
 }
-button.nav-icon:active {
+button.header-icon:active {
 	background-color: #e0e0e0;
 	transition: none;
 }
-button.nav-icon-active {
+button.header-icon-active {
 	display: flex;
 	overflow: hidden;
 	justify-content: center;
@@ -74,28 +88,28 @@ button.nav-icon-active {
 	color: black;
 	transition: all ease 0.5s;
 }
-button.nav-icon-active:hover {
+button.header-icon-active:hover {
 	box-shadow: 0 0 0 2px #808080;
 	cursor: pointer;
 }
-button.nav-icon-active:active {
+button.header-icon-active:active {
 	background-color: #e0e0e0;
 	transition: none;
 }
 /* emoji */
-button.nav-icon p {
+button.header-icon p {
 	visibility: visible;
 	width: initial;
 	font-size: 12pt;
 	filter: opacity(1);
 	transition: all ease 0.5s;
 }
-button.nav-icon:hover p, button.nav-icon-active p {
+button.header-icon:hover p, button.header-icon-active p {
 	visibility: hidden;
 	width: 0;
 	filter: opacity(0);
 }
-button.nav-icon h1 {
+button.header-icon h1 {
 	visibility: hidden;
 	width: 0;
 	font-size: 12pt;
@@ -104,7 +118,7 @@ button.nav-icon h1 {
 	filter: opacity(0);
 	transition: none;
 }
-button.nav-icon:hover h1, button.nav-icon-active h1 {
+button.header-icon:hover h1, button.header-icon-active h1 {
 	visibility: visible;
 	width: initial;
 	font-size: 12pt;
@@ -113,15 +127,15 @@ button.nav-icon:hover h1, button.nav-icon-active h1 {
 	filter: opacity(1);
 	transition: all ease 0.5s;
 }
-button.nav-icon img {
+button.header-icon img {
 	height: 32px;
 	object-fit: contain;
 }
-button.nav-icon:hover img, button.nav-icon-active img {
+button.header-icon:hover img, button.header-icon-active img {
 	visibility: hidden;
 	width: 0;
 }
-.nav-profile {
+.header-profile {
 	position: fixed;
 	top: 40px;
 	right: 8px;

@@ -1,8 +1,9 @@
 import { useLoaderData } from "react-router-dom";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 
-import Post from "../Post.js";
+import Post from "../components/Post.js";
 import "../styles/buttons.css";
+import "../styles/blitz.css";
 
 export const loadPosts = async () => {
 	const posts = await fetch("/api/posts");
@@ -31,6 +32,7 @@ export const loadPosts = async () => {
 
 export function Home() {
 	const jsonData = useLoaderData();
+
 	if (jsonData["posts"] == null || jsonData["users"] == null) {
 		return (
 			<div className="post-container">
@@ -38,6 +40,7 @@ export function Home() {
 			</div>
 		);
 	}
+
 	const users = jsonData["users"];
 	return (
 		<div className="post-container">

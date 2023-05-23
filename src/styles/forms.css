@@ -1,7 +1,7 @@
 .form-container {
 	margin: auto;
 	margin-top: 64px;
-	border: 1px solid lightgray;
+	border: 1px solid black;
 	padding: 16px;
 	width: fit-content;
 	background-color: white;
@@ -17,6 +17,10 @@ form h2 {
 form p {
 	font-size: 10pt;
 	font-weight: 400;
+}
+form hr {
+	border: 0;
+	border-bottom: 1px solid black;
 }
 input[type=text], textarea {
 	border: 0;

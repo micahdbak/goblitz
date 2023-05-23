@@ -1,11 +1,12 @@
-import loadPost from "./View.js";
 import React, { useState } from 'react';
-import { useCookies } from "react-cookie";
 import { useNavigate, useLoaderData } from "react-router-dom";
-import "./ProfileView.css"
+
+import Post from "../components/Post.js";
+
+import "../styles/ViewProfile.css"
 
 export async function loadProfiles({ params }) {
-        const user = await fetch("/api/user/" + params.UID);
+        const user = await fetch("/api/user/" + params.link);
 
 	let userData;
 
@@ -17,7 +18,7 @@ export async function loadProfiles({ params }) {
         return userData;
 }
 
-export default function ProfileView(props) {
+export default function ViewProfile(props) {
 	const user = useLoaderData();
 
 	if (user == null) {
@@ -37,6 +38,9 @@ export default function ProfileView(props) {
 				<img src={user["Image"]} />
 				<h1>{user["Name"]}</h1>
 			</div>
+			{ user["Posts"].map(post =>
+				<Post post={post} />)
+			}
 		</div>
 	);
 }
