@@ -8,3 +8,6 @@ body {
 	margin-top: 48px;
 	min-height: calc(100vh - 48px);
 }
+h1, h2, h3, p {
+	margin: 0;
+}

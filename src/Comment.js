@@ -1,14 +1,13 @@
+import User from "./User.js";
+
 import "./styles/Comment.css";
 
 export default function Comment(props) {
+	const user = props.user;
 	return (
 		<div className="comment" id={props.id}>
-			<img src={props.Image} alt={props.Name} />
-			<p>
-				<span className="Name">{props.Name}</span>&nbsp;
-				<span className="UID">(UID: {props.UID})</span>&nbsp;
-				{props.Text}
-			</p>
+			<User user={user} />
+			<p>{props.Text}</p>
 		</div>
 	);
 }

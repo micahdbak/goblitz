@@ -2,27 +2,31 @@ import React, { useState } from "react";
 import { useNavigate, useLoaderData } from "react-router-dom";
 import { useCookies } from "react-cookie";
 
+import Post from "../Post.js";
 import Comment from "../Comment.js";
 import Com from "../Com.js";
 
 import "../styles/buttons.css";
-import "../styles/Post.css";
-import "./View.css";
+import "../styles/View.css";
 
 const STAR_TRANSPARENT = "/images/star.png";
 const STAR_YELLOW = "/images/star_yellow.png";
 
 export async function loadPost({ params }) {
-	const postres = await fetch("/api/post/" + params.PID);
-	const postData = await postres.json();
-
-	const userres = await fetch("/api/users");
-	const userData = await userres.json();
+	const post = await fetch("/api/post/" + params.PID);
+	const users = await fetch("/api/users");
 
 	let jsonData = {};
 
-	jsonData["post"] = postData;
-	jsonData["users"] = userData;
+	if (post.ok)
+		jsonData["post"] = await post.json();
+	else
+		jsonData["post"] = null;
+
+	if (users.ok)
+		jsonData["users"] = await users.json();
+	else
+		jsonData["users"] = null;
 
 	return jsonData;
 }
@@ -32,11 +36,23 @@ export async function loadPost({ params }) {
 export function View(props) {
 	const jsonData = useLoaderData();
 	const post = jsonData["post"];
-	const user = jsonData["users"][parseInt(jsonData["post"]["UID"])];
+	const users = jsonData["users"];
+
+	if (post == null || users == null) {
+		return (
+			<div className="post-container">
+				<p>This post does not exist.</p>
+			</div>
+		);
+	}
+
+	const user = users[parseInt(post["UID"])];
+
 	const [cookies, setCookie, removeCookie] = useCookies(["user_UID", "user_Image", "user_Name"]);
 	const [likeCount, setLikeCount] = useState(0);
 	const [liked, setLiked] = useState(false);
 	const [commenting, setCommenting] = useState(false);
+
 	const clickLikeButton = () => {
 		if (liked) {
 			setLikeCount(likeCount - 1);
@@ -45,22 +61,10 @@ export function View(props) {
 		}
 		setLiked(!liked);
 	};
-	if (post == null || user == null) {
-		return <p>This post does not exist.</p>
-	}
+
 	return (
-		<div className="post-large-container">
-			<img src={post["Image"]}/>
-			<div className="space-between">
-				<h1>{post["Title"]}</h1>
-				<button className="post-username primary" onClick={() => {location.href="/user/" + post["UID"]}}>
-					{user["Name"]}
-				</button>
-				<h2>
-					<span className="UID">(UID: {post["UID"]})</span>,&nbsp;
-					{post["Date"]}
-				</h2>
-			</div>
+		<div className="view-container">
+			<Post post={post} users={users} />
 			<div className="space-between">
 				<h3>{likeCount} like{likeCount == 1 ? "" : "s"}</h3>
 				<div class="btn-row">
@@ -73,10 +77,6 @@ export function View(props) {
 					</button>
 				</div>
 			</div>
-			<hr />
-			<h3>Description:</h3>
-			<p>{post["Text"]}</p>
-			<hr />
 			<div class="btn-row">
 				<button className="btn primary"
 				        disabled={cookies["user_UID"] == null}
@@ -89,11 +89,10 @@ export function View(props) {
 				</button>
 			</div>
 			<div className="comment-box">
-				{ post["Comments"] != null && post["Comments"].map(c =>
-					<Comment Image={jsonData["users"][parseInt(c["UID"])]["Image"]}
-					         Name={jsonData["users"][parseInt(c["UID"])]["Name"]}
+				{ post["Comments"] != null &&
+					post["Comments"].map(c =>
+					<Comment user={users[parseInt(c["UID"])]}
 					         Text={c["Text"]}
-					         UID={c["UID"]}
 					         id={c["CID"]}/>)
 				}
 			</div>

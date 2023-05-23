@@ -1,167 +1,311 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+	"sync"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
 const (
-	BASE_URL = "http://localhost:3000"
-	DOG1 = "https://random.dog/1326984c-39b0-492c-a773-f120d747a7e2.jpg"
-	DOG2 = "https://random.dog/1abd3cbd-d6db-435b-9218-a9b6a26be50b.JPG"
-	DOG3 = "https://random.dog/5d6792a5-a458-4077-b9ee-de7f15706cca.jpg"
-	DOG4 = "https://random.dog/c8b7a017-8966-4f84-b2c6-609a739d833e.jpg"
-	DOG5 = "https://random.dog/831d264b-01c6-41f2-a00a-c798c9b72e7e.jpg"
-	DOG6 = "https://random.dog/9efb1b9f-389e-4bd6-a67a-e25cb166aa91.gif"
-	DOG7 = "https://random.dog/2b77b03c-3073-454e-957b-867580b3d005.jpg"
-	DOG8 = "https://random.dog/b775c9ae-205a-47ad-96e5-bea4d78628c5.jpg"
+	BASE_URL       = "http://localhost:3000"
+	NAME_MAX       = 50
+	IMAGE_MAX      = 512
+	TEXT_MAX       = 2000
+	TITLE_MAX      = 50
+	BLITZ_RAPIDITY = 1 // seconds between blitz
 )
 
+// User struct
 type User struct {
-	UID int
-	Name string
+	UID   int
+	Name  string
 	Image string
-	Date string
 }
 
+// Comment struct (within Post)
 type Comment struct {
-	CID int
-	UID int
+	CID  int
+	UID  int
 	Text string
 }
 
+// Post struct
 type Post struct {
-	PID int
-	UID int
-	Image string
-	Title string
-	Text string
+	PID      int
+	UID      int
+	Image    string
+	Title    string
+	Text     string
 	Comments []Comment
-	Date string
+	Mark     int
 }
 
-var user []User
-var post []Post
+var users []User
+var users_m sync.Mutex
+
+var posts map[int]*Post
+var posts_m sync.Mutex
+
+var post_PID int
 
 func init() {
-	user = append(user, User{0, "Micah Baker", DOG1, "Today"})  // 0
-	user = append(user, User{1, "Nakul Bansal", DOG2, "Today"}) // 1
-	user = append(user, User{2, "Simon Purdon", DOG3, "Today"}) // 2
-
-	post = append(post, Post{0, 0, DOG4, "New Dog", "Cute dog", nil, "Today"})
-	post = append(post, Post{1, 1, DOG5, "Hello Dog", "Crazy dog", nil, "Today"})
-	post = append(post, Post{2, 2, DOG6, "No more Dog", "Weird dog", nil, "Today"})
+	// create empty post map
+	posts = make(map[int]*Post, 0)
 }
 
 func main() {
 	e := echo.New()
 
-	e.GET("/", notFound)
+	e.GET("/", func(c echo.Context) error {
+		return echo.NewHTTPError(http.StatusNotFound)
+	})
+
 	e.GET("/api/posts", getPosts)
 	e.GET("/api/post/:PID", getPost)
-	e.GET("/api/comments/:PID", getComments)
 	e.GET("/api/users", getUsers)
 	e.GET("/api/user/:UID", getUser)
+
 	e.POST("/api/create/post", createPost)
 	e.POST("/api/create/comment", createComment)
 	e.POST("/api/create/user", createUser)
 
 	fmt.Print("Starting Goblitz Backend...")
 
+	go blitz()
+
 	log.Fatal(e.Start(":8000"))
 }
 
-func testPost(c echo.Context) error {
-	return c.Redirect(http.StatusFound, "https://google.com")
-}
+func blitz() {
+	for {
+		time.Sleep(BLITZ_RAPIDITY * time.Second)
 
-func notFound(c echo.Context) error {
-	return echo.NewHTTPError(http.StatusNotFound)
+		posts_m.Lock()
+
+		count := 0
+
+		for PID, post := range posts {
+			post.Mark--
+
+			if post.Mark <= 0 {
+				delete(posts, PID)
+				count++
+			}
+		}
+
+		if count > 0 {
+			fmt.Printf("Blitz! Deleted %d posts.\n", count)
+		}
+
+		posts_m.Unlock()
+	}
 }
 
 func getPosts(c echo.Context) error {
-	return c.JSON(http.StatusOK, post)
+	var posts_json []byte
+	var i, n = 0, len(posts)
+
+	posts_m.Lock()
+	posts_json = append(posts_json, byte('['))
+
+	for PID, post := range posts {
+		post_json, err := json.Marshal(post)
+
+		if err != nil {
+			// invalid post in posts; delete it
+			fmt.Print("Error: json.Marshal failed for post; PID: %d.\n", PID)
+
+			delete(posts, PID)
+
+			continue
+		}
+
+		posts_json = append(posts_json, post_json...)
+
+		if i++; i < n {
+			posts_json = append(posts_json, byte(','))
+		}
+	}
+
+	posts_json = append(posts_json, byte(']'))
+	posts_m.Unlock()
+
+	return c.JSONBlob(http.StatusOK, posts_json)
 }
 
 func getPost(c echo.Context) error {
-	i, err := strconv.Atoi(c.Param("PID"))
-	if err != nil || i < 0 || i >= len(post) {
-		return echo.NewHTTPError(http.StatusNotFound)
-	}
-	return c.JSON(http.StatusOK, post[i])
-}
+	posts_m.Lock()
 
-func getComments(c echo.Context) error {
-	i, err := strconv.Atoi(c.Param("PID"))
-	if err != nil || i < 0 || i >= len(post) {
+	PID, err := strconv.Atoi(c.Param("PID"))
+
+	if err != nil {
+		posts_m.Unlock()
+
+		return echo.NewHTTPError(http.StatusBadRequest)
+	}
+
+	post, ok := posts[PID]
+
+	if !ok {
+		posts_m.Unlock()
+
 		return echo.NewHTTPError(http.StatusNotFound)
 	}
-	return c.JSON(http.StatusOK, post[i].Comments)
+
+	post_json, err := json.Marshal(post)
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	posts_m.Unlock()
+
+	return c.JSONBlob(http.StatusOK, post_json)
 }
 
 func getUsers(c echo.Context) error {
-	return c.JSON(http.StatusOK, user)
+	users_m.Lock()
+	users_json, err := json.Marshal(users)
+	users_m.Unlock()
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	return c.JSONBlob(http.StatusOK, users_json)
 }
 
 func getUser(c echo.Context) error {
 	i, err := strconv.Atoi(c.Param("UID"))
-	if err != nil || i < 0 || i >= len(user) {
+	users_m.Lock()
+
+	if err != nil || i < 0 || i >= len(users) {
+		users_m.Unlock()
+
 		return echo.NewHTTPError(http.StatusNotFound)
 	}
-	return c.JSON(http.StatusOK, user[i])
+
+	user_json, err := json.Marshal(users[i])
+	users_m.Unlock()
+
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	return c.JSONBlob(http.StatusOK, user_json)
 }
 
 func createPost(c echo.Context) error {
-	var newPost Post
+	var newPost *Post
 	var err error
+
+	newPost = new(Post)
 	newPost.UID, err = strconv.Atoi(c.FormValue("UID"))
+
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest)
 	}
+
 	newPost.Image = c.FormValue("Image")
 	newPost.Title = c.FormValue("Title")
 	newPost.Text = c.FormValue("Text")
-	newPost.PID = len(post)
-	newPost.Date = "Today"
-	newPost.Comments = nil
-	post = append(post, newPost)
-	postUrl := BASE_URL + "/post/" + strconv.Itoa(newPost.PID)
-	return c.Redirect(http.StatusFound, postUrl)
+	newPost.Comments = make([]Comment, 0)
+	newPost.Mark = 100
+
+	if len(newPost.Image) > IMAGE_MAX || len(newPost.Image) == 0 ||
+		len(newPost.Title) > TITLE_MAX || len(newPost.Title) == 0 ||
+		len(newPost.Text) > TEXT_MAX || len(newPost.Text) == 0 {
+		return echo.NewHTTPError(http.StatusBadRequest)
+	}
+
+	posts_m.Lock()
+
+	PID := post_PID + 1
+	post_PID++
+
+	newPost.PID = PID
+	posts[PID] = newPost
+
+	posts_m.Unlock()
+
+	post_url := BASE_URL + "/post/" + strconv.Itoa(PID)
+
+	return c.Redirect(http.StatusFound, post_url)
 }
 
 func createComment(c echo.Context) error {
-	var newComment Comment
 	PID, err := strconv.Atoi(c.FormValue("PID"))
+
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest)
 	}
-	newComment.UID, err = strconv.Atoi(c.FormValue("UID"))
-	if err != nil {
+
+	UID, err := strconv.Atoi(c.FormValue("UID"))
+	users_m.Lock()
+
+	if err != nil || UID < 0 || UID > len(users) {
+		users_m.Unlock()
+
 		return echo.NewHTTPError(http.StatusBadRequest)
 	}
+
+	users_m.Unlock()
+
+	var newComment Comment
+
+	newComment.UID = UID
 	newComment.Text = c.FormValue("Text")
-	if post[PID].Comments == nil {
-		post[PID].Comments = make([]Comment, 0)
+
+	if len(newComment.Text) > TEXT_MAX || len(newComment.Text) == 0 {
+		return echo.NewHTTPError(http.StatusBadRequest)
 	}
-	newComment.CID = len(post[PID].Comments)
-	post[PID].Comments = append(post[PID].Comments, newComment)
-	postUrl := BASE_URL
-	postUrl += "/post/" + strconv.Itoa(PID)
-	postUrl += "#" + strconv.Itoa(newComment.CID)
-	return c.Redirect(http.StatusFound, postUrl)
+
+	posts_m.Lock()
+
+	post, ok := posts[PID]
+
+	if !ok {
+		posts_m.Unlock()
+
+		return echo.NewHTTPError(http.StatusBadRequest)
+	}
+
+	newComment.CID = len(post.Comments)
+	post.Comments = append(post.Comments, newComment)
+
+	posts_m.Unlock()
+
+	comment_url := BASE_URL + "/post/" + strconv.Itoa(PID) +
+		      "#" + strconv.Itoa(newComment.CID)
+
+	return c.Redirect(http.StatusFound, comment_url)
 }
 
 func createUser(c echo.Context) error {
 	var newUser User
+
 	newUser.Name = c.FormValue("Name")
 	newUser.Image = c.FormValue("Image")
-	newUser.UID = len(user)
-	newUser.Date = "Today"
-	user = append(user, newUser)
-	userUrl := BASE_URL + "/user/" + strconv.Itoa(newUser.UID)
-	return c.Redirect(http.StatusFound, userUrl)
+
+	if len(newUser.Name) > NAME_MAX || len(newUser.Name) == 0 ||
+		len(newUser.Image) > IMAGE_MAX || len(newUser.Image) == 0 {
+		return echo.NewHTTPError(http.StatusBadRequest)
+	}
+
+	users_m.Lock()
+
+	newUser.UID = len(users)
+	users = append(users, newUser)
+
+	users_m.Unlock()
+
+	user_url := BASE_URL + "/user/" + strconv.Itoa(newUser.UID)
+
+	return c.Redirect(http.StatusFound, user_url)
 }

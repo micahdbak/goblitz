@@ -1,0 +1,29 @@
+.user {
+	display: flex;
+	justify-content: start;
+	align-items: center;
+	padding: 0;
+	width: fit-content;
+}
+.user img {
+	border-radius: 50%;
+	margin-right: 4px;
+	border: 1px solid black;
+	min-width: 0;
+	width: 24px;
+	height: 24px;
+}
+.user h2 {
+	display: block;
+	margin-right: 4px;
+	font-weight: 400;
+	font-size: 12pt;
+	line-height: 8px;
+	text-decoration: underline;
+}
+.user h3 {
+	font-weight: 400;
+	font-size: 12pt;
+	line-height: 8px;
+	color: gray;
+}

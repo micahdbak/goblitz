@@ -1,7 +1,17 @@
 .comment {
-	border-bottom: 1px solid lightgray;
+	margin-bottom: 8px;
+	border: 1px solid black;
+	padding: 8px;
 	width: 100%;
 	background-color: white;
+	filter: drop-shadow(0px 0px 0px black);
+	transition: transform ease 0.5s, filter ease 0.5s;
+}
+.comment:hover {
+	transform: translateX(-4px) translateY(-4px);
+	filter: drop-shadow(4px 4px 0px black);
+	z-index: 1;
+	cursor: pointer;
 }
 .comment img {
 	display: inline-block;
@@ -24,8 +34,4 @@
 }
 .comment p span.UID {
 	color: gray;
-}
-.comment-box {
-	width: 100%;
-	margin-top: 16px;
 }

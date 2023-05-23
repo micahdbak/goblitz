@@ -13,38 +13,47 @@ hr {
 }
 .post {
 	margin: 8px;
-	border: 1px solid lightgray;
+	border: 1px solid black;
 	padding: 8px;
+	width: fit-content;
+	max-width: 512px;
 	height: 384px;
 	background-color: white;
+	filter: drop-shadow(0px 0px 0px black);
+	transition: transform ease 0.5s, filter ease 0.5s;
 }
 .post:hover {
+	transform: translateX(-4px) translateY(-4px);
+	filter: drop-shadow(4px 4px 0px black);
 	z-index: 1;
 	cursor: pointer;
 }
-.post img {
+.post .img-container {
+	width: 100%;
+	background-color: black;
+}
+.post .img-container img {
+	display: block;
+	margin: auto;
+	border: 1px solid black;
 	min-width: 224px;
 	max-width: 512px;
 	height: 256px;
-	background-color: #e0e0e0;
 }
-.post h1 {
-	margin: auto;
-	max-width: 224px;
+.post h1.title {
+	margin-top: 12px;
+	margin-bottom: 8px;
 	font-family: 'Noto Sans', sans-serif;
 	font-weight: 900;
 	font-size: 14pt;
 	line-height: 16px;
+	overflow-wrap: break-word;
 }
-.post h2 {
-	font-weight: 400;
-	font-size: 12pt;
-	line-height: 8px;
-}
-.post span.UID {
-	color: gray;
-}
-.post h3 {
+
+.post h3.mark {
+	position: absolute;
+	right: 8px;
+	bottom: 8px;
 	font-weight: 400;
 	font-size: 10pt;
 	line-height: 8px;
