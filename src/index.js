@@ -10,7 +10,6 @@ import Login from "./routes/Login.js";
 import Register from "./routes/Register.js";
 import Create from "./routes/Create.js";
 import ViewProfile, { loadProfiles } from "./routes/ViewProfile.js";
-import { Resolve, loadResolve } from "./routes/Resolve.js";
 
 const router = createBrowserRouter([
 	{
@@ -25,11 +24,6 @@ const router = createBrowserRouter([
 	{
 		path: "/register",
 		element: <Register />
-	},
-	{
-		path: "/resolve/:UID",
-		loader: loadResolve,
-		element: <Resolve />
 	},
 	{
 		path: "/create",
@@ -51,8 +45,6 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
 	<React.StrictMode>
 		<Header />
-		<div class="container">
-			<RouterProvider router={router} />
-		</div>
+		<RouterProvider router={router} />
 	</React.StrictMode>
 	);

@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate, useLoaderData } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 import Post from "../components/Post.js";
 import Comment from "../components/Comment.js";
+import Like from "../components/Like.js";
 import MakeComment from "../components/MakeComment.js";
 
 import "../styles/buttons.css";
-import "../styles/View.css";
-
-const STAR_TRANSPARENT = "/images/star.png";
-const STAR_YELLOW = "/images/star_yellow.png";
+import "../styles/containers.css";
 
 export async function loadPost({ params }) {
 	const post = await fetch("/api/post/" + params.PID);
@@ -33,13 +32,14 @@ export async function loadPost({ params }) {
 // access with props.---
 // contains test values and comments
 export function View(props) {
+	const [cookies, setCookie, removeCookie] = useCookies(["session", "username"]);
 	const jsonData = useLoaderData();
 	const post = jsonData["post"];
 	const users = jsonData["users"];
 
 	if (post == null || users == null) {
 		return (
-			<div className="post-container">
+			<div className="container">
 				<p>This post does not exist.</p>
 			</div>
 		);
@@ -51,30 +51,9 @@ export function View(props) {
 	const [liked, setLiked] = useState(false);
 	const [commenting, setCommenting] = useState(false);
 
-	const clickLikeButton = () => {
-		if (liked) {
-			setLikeCount(likeCount - 1);
-		} else {
-			setLikeCount(likeCount + 1);
-		}
-		setLiked(!liked);
-	};
-
 	return (
-		<div className="view-container">
+		<div className="container">
 			<Post post={post} users={users} />
-			<div className="space-between">
-				<h3>{likeCount} like{likeCount == 1 ? "" : "s"}</h3>
-				<div class="btn-row">
-					<button className="btn icon-24px primary"
-					        onClick={clickLikeButton}>
-						<img src={liked ? STAR_YELLOW : STAR_TRANSPARENT} alt="Like Button" />
-					</button>
-					<button className="btn icon-24px secondary">
-						<img src="/images/download.png" alt="" />
-					</button>
-				</div>
-			</div>
 			<div class="btn-row">
 				<button className="btn primary"
 					onClick={() => {setCommenting(!commenting)}}>
@@ -86,11 +65,11 @@ export function View(props) {
 				</button>
 			</div>
 			<div className="comment-box">
-				{ post["Comments"] != null &&
-					post["Comments"].map(c =>
-					<Comment user={users[parseInt(c["UID"])]}
-					         Text={c["Text"]}
-					         id={c["CID"]}/>)
+				{ post["Inters"] != null &&
+					post["Inters"].map(i =>
+					i["Text"].length > 0 ? (
+						<Comment Text={i["Text"]} />
+					) : <Like />)
 				}
 			</div>
 			{ commenting && <MakeComment PID={post["PID"]} /> }

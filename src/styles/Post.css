@@ -8,7 +8,6 @@ hr {
 	align-items: center;
 	flex-direction: row;
 	flex-wrap: wrap;
-	margin-top: 96px;
 	width: 100%;
 }
 .post {
@@ -50,7 +49,20 @@ hr {
 	overflow-wrap: break-word;
 }
 
+.post h3.like {
+	display: block;
+	position: absolute;
+	left: 8px;
+	bottom: 8px;
+	font-size: 12pt;
+	transition: transform ease 0.25s;
+}
+.post h3.like:hover {
+	transform: scale(1.5, 1.5);
+	filter: drop-shadow(0 0 2px #ff8000);
+}
 .post h3.mark {
+	display: block;
 	position: absolute;
 	right: 8px;
 	bottom: 8px;

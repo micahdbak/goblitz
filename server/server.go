@@ -9,11 +9,13 @@ import (
 	"sync"
 	"time"
 
+	"golang.org/x/crypto/bcrypt"
 	"github.com/labstack/echo/v4"
 )
 
 const (
 	BASE_URL         = "http://localhost:3000"
+	LINK_MAX         = 32
 	NAME_MAX         = 50
 	IMAGE_MAX        = 512
 	TEXT_MAX         = 2000
@@ -22,44 +24,70 @@ const (
 	TITLE_MAX        = 50
 	BLITZ_CYCLE      = 1 // seconds between blitz
 	BLITZ_COMPLETION = 120 // number of blitz until a user is awarded
+	DEFAULT_COST     = 8 // cost of password hashes
+	MIN_COST         = bcrypt.MinCost + 1 // minimum cost
+	TOO_FAST         = 500 * time.Millisecond // two interactions per second
 )
 
-// Comment struct (within Post)
-type Comment struct {
-	CID  int
-	_UID int
+// Interaction struct (within Post)
+type Inter struct {
+	// public
 	Text string
+
+	// private
+	_UID int
 }
 
 // Post struct
 type Post struct {
+	// public
 	PID      int
-	_UID     int
 	Image    string
 	Title    string
 	Text     string
-	Comments []Comment
-	Mark     int
+	Inters   []Inter
+
+	// private
+	_UID     int
 }
 
 // User struct
 type User struct {
-	_UID  int
+	// public
 	Link  string
-	key   string
 	Name  string
 	Image string
 	Text  string
 	Posts []Post
+
+	// private
+	_UID    int
+	hash    string
+	session bool
 }
 
+type Stats struct {
+	Sessions int
+	Users    int
+}
+
+// Session struct
+type Session struct {
+	user    *User
+	recency time.Time
+}
+
+// temporary; create cliques
 var posts map[int]*Post
 var posts_m sync.Mutex
 var post_PID int
 
-var users []User
+var users []*User
 var users_l map[string]*User
 var users_m sync.Mutex
+
+var sessions map[string]*Session
+var sessions_m sync.Mutex
 
 var blitz_i int
 var blitz_m sync.Mutex
@@ -70,6 +98,7 @@ func init() {
 	// create empty post map
 	posts = make(map[int]*Post, 0)
 	users_l = make(map[string]*User, 0)
+	sessions = make(map[string]*Session, 0)
 }
 
 func main() {
@@ -85,10 +114,15 @@ func main() {
 	e.GET("/api/post/:PID", getPost)
 	e.GET("/api/users", getUsers)
 	e.GET("/api/user/:link", getUser)
+	e.GET("/api/stats", getStats)
 
 	e.POST("/api/create/post", createPost)
-	e.POST("/api/create/comment", createComment)
+	e.POST("/api/create/inter", createInter)
 	e.POST("/api/create/user", createUser)
+
+	e.POST("/api/login/:link", logIn)
+	e.POST("/api/logout/:link", logOut)
+	e.POST("/api/session", getSession)
 
 	fmt.Print("Starting goblitz Backend...")
 
@@ -108,51 +142,72 @@ func blitz() {
 		kill := blitz_i >= BLITZ_COMPLETION
 
 		if kill {
-			var winningPost Post
+			var winner Post
+			mark := -1
 
 			fmt.Printf("BLITZ! Killing %d posts.\n", len(posts))
-			winner := false
 
 			// delete all posts; find winning post
 			for PID, post := range posts {
-				if post.Mark > winningPost.Mark {
-					winningPost = *post
-					winner = true
+				post_mark := len(post.Inters)
+
+				if post_mark > mark {
+					mark = post_mark
+					winner = *post
 				}
 
 				delete(posts, PID)
 			}
 
-			if winner {
-				fmt.Printf("Winner has UID %d.\n", winningPost._UID)
-				user := &users[winningPost._UID]
-				winner_UID = winningPost._UID
-				user.Posts = append(user.Posts, winningPost)
+			if mark > 0 {
+				fmt.Printf("Winner has link %d.\n", winner.Link)
+				user := users[winner._UID]
+				winner_UID = winner._UID
+				user.Posts = append(user.Posts, winner)
 			} else {
 				fmt.Print("No posts; no winner.\n")
 			}
 
 			blitz_i = 0
-		} else {
-			count := 0
-
-			for PID, post := range posts {
-				post.Mark--
-
-				if post.Mark <= 0 {
-					delete(posts, PID)
-					count++
-				}
-			}
-
-			if count > 0 {
-				fmt.Printf("Cycle! Deleted %d posts.\n", count)
-			}
 		}
 
-		blitz_m.Unlock()
 		posts_m.Unlock()
+		blitz_m.Unlock()
 	}
+}
+
+func userSession(accessKey string, request *http.Request) (*User, bool) {
+	sessionKey := accessKey
+
+	userAgent, ok := request.Header["User-Agent"]
+
+	if ok {
+		for _, field := range userAgent {
+			sessionKey += field
+		}
+	}
+
+	sessions_m.Lock()
+	session, ok := sessions[sessionKey]
+
+	if !ok {
+		return nil, false
+	}
+
+	now := time.Now()
+
+	if now.Sub(session.recency) < TOO_FAST {
+		// too many interactions with the website
+		sessions_m.Unlock()
+		return nil, false
+	}
+
+	// update session recency
+	session.recency = time.Now()
+	user := session.user
+	sessions_m.Unlock()
+
+	return user, true
 }
 
 func getBlitz(c echo.Context) error {
@@ -255,53 +310,57 @@ func getUser(c echo.Context) error {
 	return c.JSONBlob(http.StatusOK, user_json)
 }
 
+func getStats(c echo.Context) error {
+	var stats Stats
+
+	sessions_m.Lock()
+	users_m.Lock()
+
+	stats.Sessions = len(sessions)
+	stats.Users = len(users)
+
+	users_m.Unlock()
+	sessions_m.Unlock()
+
+	return c.JSON(http.StatusOK, stats)
+}
+
 // POST /api/create/post
-// - "UID": UID of posting user
-// - "Key": key of posting user
+// - "Session": user session
 // - "Image": image URL of post
 // - "Title": title of post
 // - "Text": text of post
 func createPost(c echo.Context) error {
-	UID, err := strconv.Atoi(c.FormValue("UID"))
-
 	users_m.Lock()
+	user, ok := userSession(c.FormValue("Session"), c.Request())
 
-	if err != nil || UID < 0 || UID > len(users) {
-		users_m.Unlock()
-		return echo.NewHTTPError(http.StatusBadRequest)
-	}
-
-	key := c.FormValue("Key")
-
-	if users[UID].key != key {
+	if !ok {
 		users_m.Unlock()
 		return echo.NewHTTPError(http.StatusUnauthorized)
 	}
 
+	// session is valid
+
+	post := new(Post)
+	post._UID = user._UID
+	post.Image = c.FormValue("Image")
+	post.Title = c.FormValue("Title")
+	post.Text = c.FormValue("Text")
+	post.Inters = make([]Inter, 0)
+
 	users_m.Unlock()
 
-	newPost := new(Post)
-	newPost._UID = UID
-	newPost.Image = c.FormValue("Image")
-	newPost.Title = c.FormValue("Title")
-	newPost.Text = c.FormValue("Text")
-	newPost.Comments = make([]Comment, 0)
-
-	blitz_m.Lock()
-	newPost.Mark = BLITZ_COMPLETION - blitz_i
-	blitz_m.Unlock()
-
-	if len(newPost.Image) > IMAGE_MAX || len(newPost.Image) == 0 ||
-		len(newPost.Title) > TITLE_MAX || len(newPost.Title) == 0 ||
-		len(newPost.Text) > TEXT_MAX || len(newPost.Text) == 0 {
+	if len(post.Image) > IMAGE_MAX || len(post.Image) == 0 ||
+		len(post.Title) > TITLE_MAX || len(post.Title) == 0 ||
+		len(post.Text) > TEXT_MAX || len(post.Text) == 0 {
 		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
 	posts_m.Lock()
 	PID := post_PID + 1
 	post_PID++
-	newPost.PID = PID
-	posts[PID] = newPost
+	post.PID = PID
+	posts[PID] = post
 	posts_m.Unlock()
 
 	post_url := BASE_URL + "/post/" + strconv.Itoa(PID)
@@ -309,41 +368,34 @@ func createPost(c echo.Context) error {
 	return c.Redirect(http.StatusFound, post_url)
 }
 
-// POST /api/create/comment
-// - "UID": UID of commenting user
-// - "Key": key of commenting user
+// POST /api/create/inter
+// - "Session": user session
 // - "PID": PID of post
 // - "Text": text of post
-func createComment(c echo.Context) error {
-	UID, err := strconv.Atoi(c.FormValue("UID"))
-
+func createInter(c echo.Context) error {
 	users_m.Lock()
+	user, ok := userSession(c.FormValue("Session"), c.Request())
 
-	if err != nil || UID < 0 || UID > len(users) {
-		users_m.Unlock()
-		return echo.NewHTTPError(http.StatusBadRequest)
-	}
-
-	key := c.FormValue("Key")
-
-	if users[UID].key != key {
+	if !ok {
 		users_m.Unlock()
 		return echo.NewHTTPError(http.StatusUnauthorized)
 	}
 
+	UID := user._UID
 	users_m.Unlock()
+
 	PID, err := strconv.Atoi(c.FormValue("PID"))
 
 	if err != nil {
 		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
-	var newComment Comment
+	var inter Inter
 
-	newComment._UID = UID
-	newComment.Text = c.FormValue("Text")
+	inter._UID = UID
+	inter.Text = c.FormValue("Text")
 
-	if len(newComment.Text) > TEXT_MAX || len(newComment.Text) == 0 {
+	if len(inter.Text) > TEXT_MAX || len(inter.Text) == 0 {
 		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
@@ -355,18 +407,14 @@ func createComment(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
-	newComment.CID = len(post.Comments)
-	post.Comments = append(post.Comments, newComment)
+	post.Inters = append(post.Inters, inter)
 	posts_m.Unlock()
 
-	comment_url := BASE_URL + "/post/" + strconv.Itoa(PID) +
-		      "#" + strconv.Itoa(newComment.CID)
-
-	return c.Redirect(http.StatusFound, comment_url)
+	return c.String(http.StatusOK, "")
 }
 
 // POST /api/create/user
-// - "Key": key of new user
+// - "Pass": password of new user
 // - "Link": link for new user
 // - "Name": name of new user
 // - "Image": profile image for new user
@@ -379,35 +427,176 @@ func createUser(c echo.Context) error {
 	// user at this link already exists
 	if ok {
 		users_m.Unlock()
-		fmt.Print(1)
 		return echo.NewHTTPError(http.StatusBadRequest)
 	}
 
 	users_m.Unlock()
 
-	var newUser User
+	user := new(User)
+	user.Link = c.FormValue("Link")
+	user.Name = c.FormValue("Name")
+	user.Image = c.FormValue("Image")
+	user.Text = c.FormValue("Text")
+	user.Posts = make([]Post, 0)
 
-	newUser.Name = c.FormValue("Name")
-	newUser.Image = c.FormValue("Image")
-	newUser.Text = c.FormValue("Text")
-	newUser.Posts = make([]Post, 0)
-	newUser.Link = link
-	newUser.key = c.FormValue("Key")
+	pass := c.FormValue("Pass")
 
-	if len(newUser.Name) > NAME_MAX || len(newUser.Name) == 0 ||
-		len(newUser.Image) > IMAGE_MAX || len(newUser.Image) == 0 ||
-		len(newUser.key) > KEY_MAX || len(newUser.key) < KEY_MIN {
-		fmt.Print(2)
+	if len(user.Link) > LINK_MAX || len(user.Link) == 0 ||
+		len(user.Name) > NAME_MAX || len(user.Name) == 0 ||
+		len(user.Image) > IMAGE_MAX || len(user.Image) == 0 ||
+		len(user.Text) > TEXT_MAX || len(user.Text) == 0 ||
+		len(pass) > KEY_MAX || len(pass) < KEY_MIN {
 		return echo.NewHTTPError(http.StatusBadRequest)
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(pass), DEFAULT_COST)
+
+	if err != nil {
+		// assume failure was the user's fault
+		return echo.NewHTTPError(http.StatusBadRequest)
+	}
+
+	user.hash = string(hash)
+
+	users_m.Lock()
+	user._UID = len(users)
+	users = append(users, user)
+	users_l[link] = users[user._UID]
+	users_m.Unlock()
+
+	login_url := BASE_URL + "/login"
+
+	return c.Redirect(http.StatusFound, login_url)
+}
+
+// POST /api/login/:user
+// - "Pass": password of user
+func logIn(c echo.Context) error {
+	users_m.Lock()
+	user, ok := users_l[c.Param("link")]
+
+	if !ok {
+		users_m.Unlock()
+		return c.String(http.StatusUnauthorized, "User does not exist.")
+	} else
+	if user.session {
+		users_m.Unlock()
+		return c.String(http.StatusUnauthorized, "User is already logged in.")
+	}
+
+	pass := c.FormValue("Pass")
+
+	if bcrypt.CompareHashAndPassword([]byte(user.hash), []byte(pass)) != nil {
+		users_m.Unlock()
+		return c.String(http.StatusUnauthorized, "Incorrect password.")
+	}
+
+	// credentials are valid; user is not already logged in
+
+	// TODO: improve this
+	hash, err := bcrypt.GenerateFromPassword([]byte(c.Param("user")), MIN_COST)
+
+	if err != nil {
+		users_m.Unlock()
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	request := c.Request()
+	userAgent, ok := request.Header["User-Agent"]
+
+	sessionKey := string(hash)
+
+	if ok {
+		for _, field := range userAgent {
+			sessionKey += field
+		}
+	}
+
+	sessions_m.Lock()
+
+	fmt.Printf("Logged in %s; sessionKey is %s\n", user.Name, sessionKey)
+
+	sessions[sessionKey] = new(Session) // create new session
+	sessions[sessionKey].user = user
+	sessions[sessionKey].recency = time.Now()
+	sessions_m.Unlock()
+
+	user.session = true
+	users_m.Unlock()
+
+	// return the session access key
+	return c.JSON(http.StatusOK, string(hash))
+}
+
+// POST /api/logout/:user
+// - "Session": access key of the user session
+func logOut(c echo.Context) error {
+	sessionKey := c.FormValue("Session")
+
+	request := c.Request()
+	userAgent, ok := request.Header["User-Agent"]
+
+	if ok {
+		for _, field := range userAgent {
+			sessionKey += field
+		}
+	}
+
+	sessions_m.Lock()
+	session, ok := sessions[sessionKey]
+
+	// check if session exists
+	if !ok {
+		sessions_m.Unlock()
+		return echo.NewHTTPError(http.StatusUnauthorized)
 	}
 
 	users_m.Lock()
-	newUser._UID = len(users)
-	users = append(users, newUser)
-	users_l[link] = &users[newUser._UID]
+
+	session.user.session = false
+	delete(sessions, sessionKey) // delete session
+
 	users_m.Unlock()
+	sessions_m.Unlock()
 
-	user_url := BASE_URL + "/resolve/" + strconv.Itoa(newUser._UID)
+	// redirect to home
+	return c.Redirect(http.StatusFound, BASE_URL)
+}
 
-	return c.Redirect(http.StatusFound, user_url)
+// POST /api/session
+// - "Session": access key of the user session
+func getSession(c echo.Context) error {
+	sessionKey := c.FormValue("Session")
+
+	request := c.Request()
+	userAgent, ok := request.Header["User-Agent"]
+
+	if ok {
+		for _, field := range userAgent {
+			sessionKey += field
+		}
+	}
+
+	sessions_m.Lock()
+	session, ok := sessions[sessionKey]
+
+	// check if session exists
+	if !ok {
+		sessions_m.Unlock()
+		return echo.NewHTTPError(http.StatusUnauthorized)
+	}
+
+	users_m.Lock()
+	user_json, err := json.Marshal(session.user)
+
+	if err != nil {
+		sessions_m.Unlock()
+		users_m.Unlock()
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	users_m.Unlock()
+	sessions_m.Unlock()
+
+	return c.JSONBlob(http.StatusOK, user_json)
 }

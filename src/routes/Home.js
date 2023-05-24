@@ -4,6 +4,7 @@ import { useCallback, useState, useEffect } from "react";
 import Post from "../components/Post.js";
 import "../styles/buttons.css";
 import "../styles/blitz.css";
+import "../styles/containers.css";
 
 export const loadPosts = async () => {
 	const posts = await fetch("/api/posts");
@@ -16,7 +17,7 @@ export const loadPosts = async () => {
 
 		if (jsonData["posts"] != null) {
 			jsonData["posts"].sort((a, b) => {
-				return a["Mark"] - b["Mark"];
+				return a["Inters"].length - b["Inters"].length;
 			});
 		}
 	} else

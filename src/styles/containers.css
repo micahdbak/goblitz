@@ -1,0 +1,22 @@
+.container {
+	position: relative;
+	top: 72px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	margin-top: 16px;
+	width: 100%;
+}
+.post-container {
+	position: relative;
+	top: 72px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: row;
+	flex-wrap: wrap;
+	margin-top: 16px;
+	width: 100%;
+}
