@@ -2,7 +2,6 @@ import { useLoaderData } from "react-router-dom";
 import { useCallback, useState, useEffect } from "react";
 
 import Post from "../components/Post.js";
-import "../styles/buttons.css";
 import "../styles/blitz.css";
 import "../styles/containers.css";
 
@@ -17,7 +16,7 @@ export const loadPosts = async () => {
 
 		if (jsonData["posts"] != null) {
 			jsonData["posts"].sort((a, b) => {
-				return a["Inters"].length - b["Inters"].length;
+				return b["Inters"].length - a["Inters"].length;
 			});
 		}
 	} else
@@ -44,7 +43,7 @@ export function Home() {
 
 	const users = jsonData["users"];
 	return (
-		<div className="post-container">
+		<div className="home-container">
 			{ jsonData["posts"].map(post =>
 				<Post clickable={true} post={post} users={users} />
 			)}

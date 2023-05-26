@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"encoding/hex"
+	"crypto/rand"
 	"fmt"
 	"log"
 	"net/http"
@@ -32,7 +34,8 @@ const (
 // Interaction struct (within Post)
 type Inter struct {
 	// public
-	Text string
+	Text    string
+	Display string
 
 	// private
 	_UID int
@@ -45,6 +48,7 @@ type Post struct {
 	Image    string
 	Title    string
 	Text     string
+	Display  string
 	Inters   []Inter
 
 	// private
@@ -64,6 +68,7 @@ type User struct {
 	_UID    int
 	hash    string
 	session bool
+	display string
 }
 
 type Stats struct {
@@ -160,8 +165,10 @@ func blitz() {
 			}
 
 			if mark > 0 {
-				fmt.Printf("Winner has link %d.\n", winner.Link)
 				user := users[winner._UID]
+
+				fmt.Printf("Winner has link %d.\n", user.Link)
+
 				winner_UID = winner._UID
 				user.Posts = append(user.Posts, winner)
 			} else {
@@ -346,6 +353,7 @@ func createPost(c echo.Context) error {
 	post.Image = c.FormValue("Image")
 	post.Title = c.FormValue("Title")
 	post.Text = c.FormValue("Text")
+	post.Display = user.display
 	post.Inters = make([]Inter, 0)
 
 	users_m.Unlock()
@@ -382,8 +390,6 @@ func createInter(c echo.Context) error {
 	}
 
 	UID := user._UID
-	users_m.Unlock()
-
 	PID, err := strconv.Atoi(c.FormValue("PID"))
 
 	if err != nil {
@@ -394,6 +400,9 @@ func createInter(c echo.Context) error {
 
 	inter._UID = UID
 	inter.Text = c.FormValue("Text")
+	inter.Display = user.display
+
+	users_m.Unlock()
 
 	if len(inter.Text) > TEXT_MAX || len(inter.Text) == 0 {
 		return echo.NewHTTPError(http.StatusBadRequest)
@@ -512,6 +521,15 @@ func logIn(c echo.Context) error {
 		}
 	}
 
+	// make session display name
+	b := make([]byte, 4)
+	_, err = rand.Read(b)
+
+	if err != nil {
+		users_m.Unlock()
+		return echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
 	sessions_m.Lock()
 
 	fmt.Printf("Logged in %s; sessionKey is %s\n", user.Name, sessionKey)
@@ -522,6 +540,7 @@ func logIn(c echo.Context) error {
 	sessions_m.Unlock()
 
 	user.session = true
+	user.display = hex.EncodeToString(b)
 	users_m.Unlock()
 
 	// return the session access key
@@ -554,6 +573,7 @@ func logOut(c echo.Context) error {
 	users_m.Lock()
 
 	session.user.session = false
+	session.user.display = ""
 	delete(sessions, sessionKey) // delete session
 
 	users_m.Unlock()

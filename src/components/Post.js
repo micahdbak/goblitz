@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useCookies } from "react-cookie";
 
 import "../styles/Post.css";
-import "../styles/buttons.css";
+import "../styles/menus.css";
 
 const STAR_TRANSPARENT = "images/star.png";
 const STAR_YELLOW = "images/star_yellow.png";
@@ -10,11 +10,11 @@ const STAR_YELLOW = "images/star_yellow.png";
 export default function Post(props) {
 	const [cookies, setCookie, removeCookie] = useCookies(["session"]);
 	const post = props["post"];
-	const handleClick = props.clickable ? () => {
-		location.href = "/post/" + post["PID"];
-	} : () => {};
 	const mark = post["Inters"].length;
 	const like = async () => {
+		if (props.disabled)
+			return;
+
 		let response;
 
 		try {
@@ -29,40 +29,47 @@ export default function Post(props) {
 				body: form
 			});
 		} catch {
-			return () => {};
+			return;
 		}
 
-		if (response.ok) {
+		if (response.ok)
 			window.location.reload(false);
-		}
 	};
 
-	useEffect(() => {
-		const updateMark = async () => {
-			let post;
-
-			try {
-				post = await fetch("/api/post/" + post["PID"]);
-			} catch {
-				return () => {};
-			}
-
-			if (post.ok)
-				setMark(post["Inters"].length);
-		}
-
-		updateMark();
-	}, mark);
-
-	return (
-		<div className="post" onClick={handleClick}>
-			<div className="img-container">
-				<img src={post["Image"]} alt={post["Title"]}/>
+	if (props.view)
+		return (
+			<>
+				<div className="view-post">
+					<img src={post["Image"]} alt={post["Title"]} />
+					<h2 className="mark">{mark}</h2>
+					<h2 className="PID">/p/{post["PID"]}</h2>
+					<h2 className="like" onClick={like}>🔥</h2>
+				</div>
+				<div className="view-desc">
+					<p>
+						<span className="author">{post["Display"]}:</span>&nbsp;
+						{post["Text"]}
+					</p>
+				</div>
+			</>
+		);
+	else
+		return (
+			<div className="post">
+				<img src={post["Image"]} alt={post["Title"]} />
+				<h2 className="mark">{mark}</h2>
+				{ props.disabled ?
+					<h2 className="PID">/p/{post["PID"]}</h2> :
+					<a className="PID" href={"/p/" + post["PID"]}>/p/{post["PID"]}</a>
+				}
+				<div className="desc">
+					<h1>{post["Title"]}</h1>
+					<p>
+						<span className="author">{post["Display"]}:</span>&nbsp;
+						{post["Text"]}
+					</p>
+					<h2 className="like" onClick={like}>🔥</h2>
+				</div>
 			</div>
-			<h1 className="title">{post["Title"]}</h1>
-			<p className="text">{post["Text"]}</p>
-			<h3 className="like" onClick={like}>🔥</h3>
-			<h3 className="mark">{mark}</h3>
-		</div>
-	);
+		);
 }

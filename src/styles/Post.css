@@ -1,127 +1,137 @@
-hr {
-	border: 0;
-	border-bottom: 1px solid lightgray;
-}
-.post-container {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	flex-direction: row;
-	flex-wrap: wrap;
-	width: 100%;
-}
-.post {
-	margin: 8px;
+.view-post {
+	position: relative;
+	overflow: hidden;
+	margin: 4px;
 	border: 1px solid black;
-	padding: 8px;
 	width: fit-content;
-	max-width: 512px;
-	height: 384px;
-	background-color: white;
-	filter: drop-shadow(0px 0px 0px black);
-	transition: transform ease 0.5s, filter ease 0.5s;
+	height: 256px;
+	background-color: #404040;
 }
-.post:hover {
-	transform: translateX(-4px) translateY(-4px);
-	filter: drop-shadow(4px 4px 0px black);
-	z-index: 1;
-	cursor: pointer;
-}
-.post .img-container {
-	width: 100%;
-	background-color: black;
-}
-.post .img-container img {
-	display: block;
-	margin: auto;
-	border: 1px solid black;
+.view-post img, .post img {
+	object-fit: cover;
+	max-width: 384px;
 	min-width: 224px;
-	max-width: 512px;
 	height: 256px;
 }
-.post h1.title {
-	margin-top: 12px;
-	margin-bottom: 8px;
-	font-family: 'Noto Sans', sans-serif;
-	font-weight: 900;
-	font-size: 14pt;
-	line-height: 16px;
-	overflow-wrap: break-word;
-}
-
-.post h3.like {
-	display: block;
-	position: absolute;
-	left: 8px;
-	bottom: 8px;
+.view-post h2.mark, h2.PID {
+	z-index: 2;
+	font-weight: 400;
 	font-size: 12pt;
-	transition: transform ease 0.25s;
+	color: white;
+	filter: drop-shadow(0 0 1px black);
 }
-.post h3.like:hover {
-	transform: scale(1.5, 1.5);
-	filter: drop-shadow(0 0 2px #ff8000);
+.view-post h2.mark {
+	position: absolute;
+	top: 8px;
+	left: 8px;
 }
-.post h3.mark {
-	display: block;
+h2.PID {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+}
+.view-post h2.like {
+	z-index: 2;
 	position: absolute;
 	right: 8px;
 	bottom: 8px;
 	font-weight: 400;
-	font-size: 10pt;
-	line-height: 8px;
+	font-size: 12pt;
+	filter: drop-shadow(0 0 1px black);
+	transition: transform ease 0.25s;
 }
-.like_button button img {
-	width: 50px;
-	height: 50px;
-	justify-content: center;
+.view-post h2.like:hover {
+	transform: scale(1.5, 1.5);
+	cursor: pointer;
 }
-.like_button {
-	transition: 0.1s;
-	margin-left: 5px;
+.view-desc {
+	margin: 4px;
+	border: 1px solid black;
+	padding: 8px;
+	max-width: 512px;
+	background-color: black;
+	color: white;
+	overflow-wrap: break-word;
 }
-.like_button:hover {
-	transform: scale(1.02, 1.02);
+.view-desc p {
+	font-weight: 400;
+	font-size: 12pt;
 }
-.post-large-container {
-	margin: auto;
-	margin-top: 64px;
-	margin-bottom: 50vh;
-	border: 1px solid lightgray;
-	padding: 16px;
-	max-width: 768px;
-	background-color: white;
+.view-desc p span.author {
+	color: #c0c0c0;
+	text-decoration: underline;
 }
-.post-large-container img {
-	margin-bottom: 16px;
-	width: 100%;
+.post {
+	position: relative;
+	overflow: hidden;
+	margin: 8px;
+	border: 1px solid black;
+	width: fit-content;
+	height: 256px;
+	background-color: #404040;
 }
-.post-large-container .space-between {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	flex-direction: row;
-	flex-wrap: nowrap;
-	width: 100%;
+.post h2.mark, a.PID {
+	z-index: 2;
+	font-weight: 400;
+	font-size: 12pt;
+	filter: drop-shadow(0 0 1px black);
 }
-.post-large-container h1 {
-	margin: 0;
-	text-align: center;
+.post h2.mark {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	color: white;
+}
+a.PID {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	color: #c0c0ff;
+}
+a.PID:hover {
+	color: #e0e0ff;
+}
+.post .desc {
+	z-index: 1;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	padding: 8px;
+	padding-top: 32px;
+	opacity: 0%;
+	color: white;
+	background-color: rgba(0, 0, 0, 0.25);
+	filter: drop-shadow(0 0 1px black);
+	transition: opacity ease 0.25s;
+}
+.post:hover .desc {
+	opacity: 100%;
+}
+.post .desc h1 {
 	font-family: 'Noto Sans', sans-serif;
 	font-weight: 900;
-	font-size: 20pt;
-}
-.post-large-container h2 {
-	margin: 0;
-	font-weight: 400;
-	font-size: 16pt;
-}
-.post-large-container span.UID {
-	color: gray;
-}
-.post-large-container h3 {
-	margin: 0;
 	font-size: 14pt;
 }
-.post-large-container p {
+.post .desc p {
+	font-weight: 400;
+	font-size: 10pt;
+}
+.post .desc p span.author {
+	color: #c0c0c0;
+	text-decoration: underline;
+}
+.post .desc h2.like {
+	z-index: 2;
+	position: absolute;
+	right: 8px;
+	bottom: 8px;
+	font-weight: 400;
 	font-size: 12pt;
+	transition: transform ease 0.25s;
+}
+.post .desc h2.like:hover {
+	transform: scale(1.5, 1.5);
+	cursor: pointer;
 }

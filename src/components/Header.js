@@ -1,131 +1,125 @@
-import { useState, useCallback, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 
+import Grow from "./Grow.js";
+
+import "../styles/containers.css";
+import "../styles/menus.css";
 import "../styles/Header.css";
-import "../styles/buttons.css";
 
 export default function Header() {
-	const [cookies, setCookie, removeCookie] = useCookies(["session", "username"]);
-	const [profileOpen, setProfileOpen] = useState(false);
-	const [loginOpen, setLoginOpen] = useState(false);
-	const [registerOpen, setRegisterOpen] = useState(false);
+	const [cookies, setCookie, removeCookie] = useCookies(["session", "username", "userimage"]);
+	const [loaded, setLoaded] = useState(false);
 	const [remaining, setRemaining] = useState(0);
-	const [didLoad, setDidLoad] = useState(false);
-	const [watchers, setWatchers] = useState(0);
+	const [watching, setWatching] = useState(0);
 
-	const callBlitz = async () => {
-		let blitz;
+	const load = async () => {
+		let response;
 
 		try {
-			blitz = await fetch("/api/blitz");
+			response = await fetch("/api/blitz");
 		} catch {
 			return;
 		}
 
-		if (blitz.ok) {
-			const _remaining = await blitz.json();
+		if (response.ok) {
+			const json = await response.json();
+			setRemaining(parseInt(json));
+		}
 
-			setRemaining(_remaining);
+		try {
+			response = await fetch("/api/stats");
+		} catch {
+			return;
+		}
+
+		if (response.ok) {
+			const json = await response.json();
+			setWatching(parseInt(json["Sessions"]));
 		}
 	};
-	const callStats = async () => {
-		let stats;
+
+	useEffect(() => {
+		if (!loaded) {
+			load();
+			setLoaded(true);
+		}
+
+		const interval = setInterval(() => {
+			setRemaining(remaining - 1);
+
+			if (remaining < 0)
+				setRemaining(120);
+		}, 1000);
+
+		return () => { clearInterval(interval) };
+	}, [remaining, watching]);
+
+	const logout = async () => {
+		const form = new FormData();
+
+		form.append("Session", cookies["session"]);
+
+		let response;
 
 		try {
-			stats = await fetch("/api/stats");
+			response = await fetch("/api/logout/" + cookies["username"], {
+				method: "POST",
+				body: form
+			});
 		} catch {
 			return;
 		}
 
-		if (stats.ok) {
-			const statsData = await stats.json();
+		if (response.ok) {
+			removeCookie("session");
+			removeCookie("username");
+			removeCookie("userimage");
 
-			setWatchers(statsData["Sessions"]);
+			location.reload(false);
 		}
-	}
+	};
 
-	useEffect(() => {
-		if (!didLoad) {
-			callBlitz();
-			callStats();
+	let rbuttons;
 
-			setDidLoad(true);
-		} else {
-			const interval = setInterval(() => {
-				if (remaining > 0)
-					setRemaining(remaining - 1);
-				else
-					// refresh page once counter hits zero
-					window.location.reload(false);
-			}, 1000);
-			return () => clearInterval(interval);
-		}
-	});
-
-	const menu = cookies["session"] == null ? (
-		<>
-			<button className="header-icon" onClick={() => {location.href="/login"}}>
-				<p>🔐</p>
-				<h1>Login</h1>
-			</button>
-			<button className="header-icon" onClick={() => {location.href="/register"}}>
-				<p>✨</p>
-				<h1>Register</h1>
-			</button>
-			<button className="header-icon">
-				<p>🌙</p>
-				<h1>Theme</h1>
-			</button>
-		</>
-	) : (
-		<>
-			<button className="header-icon" onClick={() => {location.href="/create"}}>
-				<p>+</p>
-				<h1>Make Post</h1>
-			</button>
-			<button className="header-icon">
-				<p>:)</p>
-				<h1>{cookies["username"]}</h1>
-			</button>
-			<button className="header-icon" onClick={() => {location.href="/logout"}}>
-				<p>🚶</p>
-				<h1>Logout</h1>
-			</button>
-		</>
-	)
+	if (cookies["session"] != null)
+		rbuttons = (
+			<div className="header-group">
+				<Grow normal="+" hover="Post" link="/create" />
+				<Grow image={true} normal={cookies["userimage"]} hover={cookies["username"]} link={"/user/" + cookies["username"]} />
+				<Grow normal="👋" hover="Logout" click={logout} />
+			</div>
+		);
+	else
+		rbuttons = (
+			<div className="header-group">
+				<Grow normal="🔐" hover="Login" link="/login" />
+				<Grow normal="✨" hover="Register" link="/register" />
+			</div>
+		);
 
 	return (
 		<>
 			<div className="header-container">
 				<div className="header-group">
-					<button className="header-icon" onClick={() => {location.href="/"}}>
-						<p>🏠</p>
-						<h1>Home</h1>
+					<Grow normal="🏠" hover="Home" link="/" />
+					<button className="grew hot">
+						<span className="red">⏰ Blitz in {remaining}s!</span>
+					</button>
+					<button className="grew">
+						👀 {watching} watching
 					</button>
 				</div>
-				<div className="header-group-center">
-					<h1 className="header-goblitz">
-						goblitz.net
-					</h1>
+				<div className="header-center">
+					<h1 className="goblitz">goblitz.net</h1>
 				</div>
-				<div className="header-group">
-					{menu}
-				</div>
-				{ profileOpen && <Pro /> }
+				{rbuttons}
 			</div>
-			<div className="stats-container">
-				<h1>
-					<span className="larger">
-						Blitz in {remaining}s;&nbsp;
-						<i>{watchers} watching.</i>
-					</span>&nbsp;&mdash;
-					goblitz.net is currently in BETA;
-					if you are interested in helping,
-					please check out our&nbsp;
-					<a href="https://github.com/micahdbak/goblitz">
-						GitHub
-					</a>.
-				</h1>
+			<div className="blitz-container">
+				<p className="blitz">
+					<u>goblitz.net</u> is currently in beta;&nbsp;
+					if you'd like to help, check out our <a href="https://github.com/micahdbak/goblitz">GitHub</a>!
+				</p>
 			</div>
 		</>
 	);

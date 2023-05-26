@@ -4,38 +4,37 @@ import { useCookies } from "react-cookie";
 
 import Post from "../components/Post.js";
 import Comment from "../components/Comment.js";
-import Like from "../components/Like.js";
-import MakeComment from "../components/MakeComment.js";
+import Write from "../components/Write.js";
 
-import "../styles/buttons.css";
 import "../styles/containers.css";
+import "../styles/menus.css";
 
 export async function loadPost({ params }) {
 	const post = await fetch("/api/post/" + params.PID);
 	const users = await fetch("/api/users");
 
-	let jsonData = {};
+	let json = {};
 
 	if (post.ok)
-		jsonData["post"] = await post.json();
+		json["post"] = await post.json();
 	else
-		jsonData["post"] = null;
+		json["post"] = null;
 
 	if (users.ok)
-		jsonData["users"] = await users.json();
+		json["users"] = await users.json();
 	else
-		jsonData["users"] = null;
+		json["users"] = null;
 
-	return jsonData;
+	return json;
 }
 
 // access with props.---
 // contains test values and comments
 export function View(props) {
 	const [cookies, setCookie, removeCookie] = useCookies(["session", "username"]);
-	const jsonData = useLoaderData();
-	const post = jsonData["post"];
-	const users = jsonData["users"];
+	const json = useLoaderData();
+	const post = json["post"];
+	const users = json["users"];
 
 	if (post == null || users == null) {
 		return (
@@ -47,32 +46,19 @@ export function View(props) {
 
 	const user = users[parseInt(post["UID"])];
 
-	const [likeCount, setLikeCount] = useState(0);
-	const [liked, setLiked] = useState(false);
-	const [commenting, setCommenting] = useState(false);
-
 	return (
-		<div className="container">
-			<Post post={post} users={users} />
-			<div class="btn-row">
-				<button className="btn primary"
-					onClick={() => {setCommenting(!commenting)}}>
-					Comment
-				</button>
-				<button className="btn secondary"
-					onClick={() => {location.href = "/"}}>
-					Go Back
-				</button>
+		<div className="view-container">
+			<div className="view-lcol">
+				<Post view={true} post={post} users={users} />
 			</div>
-			<div className="comment-box">
+			<div className="view-rcol">
 				{ post["Inters"] != null &&
 					post["Inters"].map(i =>
-					i["Text"].length > 0 ? (
-						<Comment Text={i["Text"]} />
-					) : <Like />)
+						<Comment comment={i} />
+					)
 				}
+				<Write PID={post["PID"]} />
 			</div>
-			{ commenting && <MakeComment PID={post["PID"]} /> }
 		</div>
 	);
 }

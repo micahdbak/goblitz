@@ -1,12 +1,11 @@
 import { useState, useRef } from "react";
 import { useCookies } from "react-cookie";
 
-import "../styles/forms.css";
-import "../styles/buttons.css";
+import "../styles/menus.css";
 import "../styles/containers.css";
 
 export default function Login() {
-	const [cookies, setCookie, removeCookie] = useCookies(["session", "username"]);
+	const [cookies, setCookie, removeCookie] = useCookies(["session", "username", "userimage"]);
 	const [isLoggingIn, setIsLoggingIn] = useState(false);
 	const [message, setMessage] = useState("");
 	const usernameRef = useRef(null);
@@ -36,10 +35,20 @@ export default function Login() {
 		}
 
 		if (response.ok) {
+			let user_response;
+
+			try {
+				user_response = await fetch("/api/user/" + username);
+			} catch {
+				return;
+			}
+
+			const user = await user_response.json();
 			const session = await response.json();
 
 			setCookie("session", session);
 			setCookie("username", username);
+			setCookie("userimage", user["Image"]);
 		} else {
 			const error = await response.json();
 
@@ -53,20 +62,26 @@ export default function Login() {
 	}
 	return (
 		<div className="container">
-			<div className="form-container">
+			<div className="menu-box">
 				<h1>Login</h1>
 				<hr />
 				<p>Username</p>
-				<input ref={usernameRef} type="text" /><br />
+				<input ref={usernameRef} type="text" />
 				<p>Password</p>
-				<input ref={passwordRef} type="password" /><br />
-				<button className="btn primary"
+				<input ref={passwordRef} type="password" />
+				<button className="rounded primary"
 					onClick={submitLogin}
 					disabled={isLoggingIn}>
-					Submit
+					Login
+				</button>
+				<div className="menu-sp8" />
+				<p className="small">Don't have an account?</p>
+				<button className="rounded secondary"
+					onClick={() => {location.href="/register"}}>
+					Register
 				</button>
 				{ message != "" &&
-					<p className="message">{message}</p>
+					<p className="menu-message">{message}</p>
 				}
 			</div>
 		</div>

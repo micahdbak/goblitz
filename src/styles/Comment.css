@@ -1,41 +1,17 @@
-.comment-box {
-	margin: auto;
-	width: fit-content;
-}
 .comment {
-	margin-bottom: 8px;
+	margin: 4px;
 	border: 1px solid black;
 	padding: 8px;
-	width: fit-content;
+	max-width: 512px;
 	background-color: white;
-	filter: drop-shadow(0px 0px 0px black);
-	transition: transform ease 0.5s, filter ease 0.5s;
-}
-.comment:hover {
-	transform: translateX(-4px) translateY(-4px);
-	filter: drop-shadow(4px 4px 0px black);
-	z-index: 1;
-	cursor: pointer;
-}
-.comment img {
-	display: inline-block;
-	float: left;
-	margin-right: 8px;
-	border-radius: 12px;
-	width: 24px;
-	height: 24px;
-}
-.comment:target {
-	background-color: #f0f0f0;
+	color: black;
+	overflow-wrap: break-word;
 }
 .comment p {
-	font-family: 'Source Sans Pro', sans-serif;
 	font-weight: 400;
 	font-size: 12pt;
 }
-.comment p span.Name {
+.comment p span.author {
+	color: #808080;
 	text-decoration: underline;
-}
-.comment p span.UID {
-	color: gray;
 }

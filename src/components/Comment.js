@@ -1,10 +1,13 @@
 import "../styles/Comment.css";
 
 export default function Comment(props) {
-	const user = props.user;
+	const comment = props.comment
 	return (
 		<div className="comment" id={props.id}>
-			<p>{props.Text}</p>
+			<p>
+				<span className="author">{comment["Display"]}:</span>&nbsp;
+				{comment["Text"]}
+			</p>
 		</div>
 	);
 }

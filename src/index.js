@@ -30,12 +30,12 @@ const router = createBrowserRouter([
 		element: <Create />
 	},
 	{
-		path: "/post/:PID",
+		path: "/p/:PID",
 		loader: loadPost,
 		element: <View />
 	},
 	{
-		path: "/user/:link",
+		path: "/u/:link",
 		loader: loadProfiles,
 		element: <ViewProfile />
 	}

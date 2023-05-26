@@ -4,7 +4,7 @@ body {
 	max-width: 100vw;
 	min-height: 100vh;
 	font-family: 'Source Sans Pro', sans-serif;
-	background: linear-gradient(45deg, #e66465, #9198e5);
+	background: #606080;
 }
 h1, h2, h3, p {
 	margin: 0;
