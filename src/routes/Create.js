@@ -7,14 +7,15 @@ import "../styles/containers.css";
 import "../styles/menus.css";
 
 export default function Create() {
-	const [cookies, setCookie, removeCookie] = useCookies(["session", "username" ]);
+	const [cookies, setCookie, removeCookie] = useCookies(["session", "display"]);
+	const [message, setMessage] = useState("");
 	const [post, setPost] = useState({
 		"Inters": [],
 		"Image": "",
 		"Title": "",
 		"Text": "",
 		"PID": "0",
-		"Display": "(Anonymous)"
+		"Creator": cookies["display"]
 	});
 	const imageRef = useRef(null);
 	const titleRef = useRef(null);
@@ -26,9 +27,17 @@ export default function Create() {
 			"Title": titleRef.current.value,
 			"Text": textRef.current.value,
 			"PID": "0",
-			"Display": "(Anonymous)"
+			"Creator": cookies["display"]
 		});
 	};
+
+	if (cookies["session"] == null)
+		return (
+			<div className="container">
+				<h1 className="external">You must be logged in to create a post.</h1>
+			</div>
+		);
+
 	return (
 		<div className="view-container">
 			<div className="view-lcol">
@@ -36,13 +45,13 @@ export default function Create() {
 					<h1>Create Post</h1>
 					<hr />
 					<form action="/api/create/post" method="post">
-						<input type="hidden" name="Session" value={cookies["session"]} />
+						<input required type="hidden" name="Session" value={cookies["session"]} />
 						<p>Image:</p>
-						<input ref={imageRef} type="text" name="Image" /><br />
+						<input required ref={imageRef} type="text" name="Image" /><br />
 						<p>Title:</p>
-						<input ref={titleRef} type="text" name="Title" /><br />
+						<input required ref={titleRef} type="text" name="Title" /><br />
 						<p>Body:</p>
-						<textarea ref={textRef} name="Text" /><br />
+						<textarea required ref={textRef} name="Text" /><br />
 						<button className="rounded primary" disabled={cookies["session"] == null} type="submit">
 							Post
 						</button>

@@ -8,18 +8,20 @@ import "../styles/menus.css";
 import "../styles/Header.css";
 
 export default function Header() {
-	const [cookies, setCookie, removeCookie] = useCookies(["session", "username", "userimage"]);
+	const [cookies, setCookie, removeCookie] = useCookies([
+		"userlink", "username", "userimage", "session", "display", "moderator"
+	]);
 	const [loaded, setLoaded] = useState(false);
 	const [remaining, setRemaining] = useState(0);
 	const [watching, setWatching] = useState(0);
-
+	const [winner, setWinner] = useState({ "User": null, "Post": null })
 	const load = async () => {
 		let response;
 
 		try {
 			response = await fetch("/api/blitz");
 		} catch {
-			return;
+			// do nothing
 		}
 
 		if (response.ok) {
@@ -30,13 +32,50 @@ export default function Header() {
 		try {
 			response = await fetch("/api/stats");
 		} catch {
-			return;
+			// do nothing
 		}
 
 		if (response.ok) {
 			const json = await response.json();
 			setWatching(parseInt(json["Sessions"]));
 		}
+
+		try {
+			response = await fetch("/api/winner");
+		} catch {
+			// do nothing
+		}
+
+		if (response.ok) {
+			const json = await response.json();
+			setWinner(json);
+		}
+	};
+	const logout = async () => {
+		removeCookie("userlink");
+		removeCookie("username");
+		removeCookie("userimage");
+		removeCookie("session");
+		removeCookie("display");
+		removeCookie("moderator");
+
+		const form = new FormData();
+
+		form.append("Session", cookies["session"]);
+
+		let response;
+
+		try {
+			response = await fetch("/api/logout", {
+				method: "POST",
+				body: form
+			});
+		} catch {
+			// do nothing
+		}
+
+		setLoaded(false);
+		location.href = "/";
 	};
 
 	useEffect(() => {
@@ -46,39 +85,12 @@ export default function Header() {
 		}
 
 		const interval = setInterval(() => {
-			setRemaining(remaining - 1);
-
-			if (remaining < 0)
-				setRemaining(120);
+			if (remaining > 0)
+				setRemaining(remaining - 1);
 		}, 1000);
 
 		return () => { clearInterval(interval) };
 	}, [remaining, watching]);
-
-	const logout = async () => {
-		const form = new FormData();
-
-		form.append("Session", cookies["session"]);
-
-		let response;
-
-		try {
-			response = await fetch("/api/logout/" + cookies["username"], {
-				method: "POST",
-				body: form
-			});
-		} catch {
-			return;
-		}
-
-		if (response.ok) {
-			removeCookie("session");
-			removeCookie("username");
-			removeCookie("userimage");
-
-			location.reload(false);
-		}
-	};
 
 	let rbuttons;
 
@@ -86,7 +98,7 @@ export default function Header() {
 		rbuttons = (
 			<div className="header-group">
 				<Grow normal="+" hover="Post" link="/create" />
-				<Grow image={true} normal={cookies["userimage"]} hover={cookies["username"]} link={"/user/" + cookies["username"]} />
+				<Grow image={cookies["userimage"]} hover={cookies["userlink"]} link={"/u/" + cookies["userlink"]} />
 				<Grow normal="👋" hover="Logout" click={logout} />
 			</div>
 		);
@@ -103,12 +115,22 @@ export default function Header() {
 			<div className="header-container">
 				<div className="header-group">
 					<Grow normal="🏠" hover="Home" link="/" />
-					<button className="grew hot">
-						<span className="red">⏰ Blitz in {remaining}s!</span>
-					</button>
+					{ remaining > 0 ?
+						<button className="grew hot">
+							⏰ Blitz in {remaining}s!
+						</button> :
+						<button className="grew hot">
+							Reload Page
+						</button>
+					}
 					<button className="grew">
 						👀 {watching} watching
 					</button>
+					{ winner.User != null && winner.Post != null &&
+						<Grow image={winner.User["Image"]}
+							hover={"/p/" + winner.Post["PID"]}
+							link={"/p/" + winner.Post["PID"]} />
+					}
 				</div>
 				<div className="header-center">
 					<h1 className="goblitz">goblitz.net</h1>

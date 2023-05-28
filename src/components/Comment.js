@@ -3,9 +3,13 @@ import "../styles/Comment.css";
 export default function Comment(props) {
 	const comment = props.comment
 	return (
-		<div className="comment" id={props.id}>
+		<div className={
+			comment["Blitz"] == true ?
+				"comment comment-blitz" :
+				"comment"
+			}>
 			<p>
-				<span className="author">{comment["Display"]}:</span>&nbsp;
+				<span className="creator">{comment["Creator"]}:</span>&nbsp;
 				{comment["Text"]}
 			</p>
 		</div>

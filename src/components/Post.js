@@ -1,30 +1,24 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useCookies } from "react-cookie";
 
+import Grow from "./Grow.js";
+
 import "../styles/Post.css";
 import "../styles/menus.css";
 
-const STAR_TRANSPARENT = "images/star.png";
-const STAR_YELLOW = "images/star_yellow.png";
-
 export default function Post(props) {
-	const [cookies, setCookie, removeCookie] = useCookies(["session"]);
+	const [cookies, setCookie, removeCookie] = useCookies(["session", "username", "moderator", "display"]);
 	const post = props["post"];
 	const mark = post["Inters"].length;
-	const like = async () => {
-		if (props.disabled)
-			return;
+	const deletePost = async () => {
+		const form = new FormData();
+
+		form.append("Session", cookies["session"]);
 
 		let response;
 
 		try {
-			const form = new FormData();
-
-			form.append("Session", cookies["session"]);
-			form.append("PID", post["PID"]);
-			form.append("Text", "🔥"); // a like is just a flame comment
-
-			response = await fetch("/api/create/inter", {
+			response = await fetch("/api/delete/" + post["PID"], {
 				method: "POST",
 				body: form
 			});
@@ -32,9 +26,20 @@ export default function Post(props) {
 			return;
 		}
 
-		if (response.ok)
-			window.location.reload(false);
+		if (response.ok) {
+			location.href = "/";
+		}
 	};
+	const deleteButton =
+		post["Creator"] == cookies["userlink"] ||
+		post["Creator"] == cookies["display"] ||
+		cookies["moderator"] == true ?
+		<button className="rounded primary"
+			disabled={post["Overwrite"] || props.disabled}
+			onClick={deletePost}>
+			{post["Overwrite"] ? "Deleting..." : "Delete"}
+		</button> :
+		<></>;
 
 	if (props.view)
 		return (
@@ -43,11 +48,12 @@ export default function Post(props) {
 					<img src={post["Image"]} alt={post["Title"]} />
 					<h2 className="mark">{mark}</h2>
 					<h2 className="PID">/p/{post["PID"]}</h2>
-					<h2 className="like" onClick={like}>🔥</h2>
+					{deleteButton}
 				</div>
+				<h1 className="view-title">{post["Title"]}</h1>
 				<div className="view-desc">
 					<p>
-						<span className="author">{post["Display"]}:</span>&nbsp;
+						<span className="creator">{post["Creator"]}:</span>&nbsp;
 						{post["Text"]}
 					</p>
 				</div>
@@ -58,6 +64,7 @@ export default function Post(props) {
 			<div className="post">
 				<img src={post["Image"]} alt={post["Title"]} />
 				<h2 className="mark">{mark}</h2>
+				{deleteButton}
 				{ props.disabled ?
 					<h2 className="PID">/p/{post["PID"]}</h2> :
 					<a className="PID" href={"/p/" + post["PID"]}>/p/{post["PID"]}</a>
@@ -65,10 +72,9 @@ export default function Post(props) {
 				<div className="desc">
 					<h1>{post["Title"]}</h1>
 					<p>
-						<span className="author">{post["Display"]}:</span>&nbsp;
+						<span className="author">{post["Creator"]}:</span>&nbsp;
 						{post["Text"]}
 					</p>
-					<h2 className="like" onClick={like}>🔥</h2>
 				</div>
 			</div>
 		);

@@ -10,7 +10,7 @@ export default function Grow(props) {
 	}
 	const normal = props.image == null ?
 		<h1 className="normal">{props.normal}</h1> :
-		<img className="normal" src={props.normal} alt={props.hover} />;
+		<img className="normal" src={props.image} alt={props.hover} />;
 
 	return (
 		<button className="grow" onClick={handle}>

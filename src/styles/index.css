@@ -3,8 +3,8 @@ body {
 	padding: 0;
 	max-width: 100vw;
 	min-height: 100vh;
-	font-family: 'Source Sans Pro', sans-serif;
-	background: #606080;
+	font-family: 'Roboto', 'Noto Emoji', sans-serif;
+	background: #e0e0e0;
 }
 h1, h2, h3, p {
 	margin: 0;

@@ -7,11 +7,14 @@
 	color: black;
 	overflow-wrap: break-word;
 }
+.comment-blitz {
+	background-color: #fff0c0;
+}
 .comment p {
 	font-weight: 400;
-	font-size: 12pt;
+	font-size: 10pt;
 }
-.comment p span.author {
+.comment p span.creator {
 	color: #808080;
 	text-decoration: underline;
 }

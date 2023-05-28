@@ -30,19 +30,22 @@ h2.PID {
 	top: 8px;
 	right: 8px;
 }
-.view-post h2.like {
-	z-index: 2;
+.view-post button, .post button {
 	position: absolute;
 	right: 8px;
 	bottom: 8px;
+}
+h1.view-title {
+	margin: 4px;
+	border: 1px solid black;
+	padding: 8px;
+	max-width: 512px;
+	background-color: white;
+	color: black;
+	overflow-wrap: break-word;
 	font-weight: 400;
 	font-size: 12pt;
-	filter: drop-shadow(0 0 1px black);
-	transition: transform ease 0.25s;
-}
-.view-post h2.like:hover {
-	transform: scale(1.5, 1.5);
-	cursor: pointer;
+	margin: 4px;
 }
 .view-desc {
 	margin: 4px;
@@ -57,10 +60,11 @@ h2.PID {
 	font-weight: 400;
 	font-size: 12pt;
 }
-.view-desc p span.author {
+.view-desc p span.creator {
 	color: #c0c0c0;
 	text-decoration: underline;
 }
+
 .post {
 	position: relative;
 	overflow: hidden;
@@ -110,8 +114,8 @@ a.PID:hover {
 	opacity: 100%;
 }
 .post .desc h1 {
-	font-family: 'Noto Sans', sans-serif;
-	font-weight: 900;
+	font-family: 'Roboto Condensed', sans-serif;
+	font-weight: 700;
 	font-size: 14pt;
 }
 .post .desc p {
@@ -121,15 +125,6 @@ a.PID:hover {
 .post .desc p span.author {
 	color: #c0c0c0;
 	text-decoration: underline;
-}
-.post .desc h2.like {
-	z-index: 2;
-	position: absolute;
-	right: 8px;
-	bottom: 8px;
-	font-weight: 400;
-	font-size: 12pt;
-	transition: transform ease 0.25s;
 }
 .post .desc h2.like:hover {
 	transform: scale(1.5, 1.5);

@@ -11,7 +11,6 @@ import "../styles/menus.css";
 
 export async function loadPost({ params }) {
 	const post = await fetch("/api/post/" + params.PID);
-	const users = await fetch("/api/users");
 
 	let json = {};
 
@@ -20,36 +19,28 @@ export async function loadPost({ params }) {
 	else
 		json["post"] = null;
 
-	if (users.ok)
-		json["users"] = await users.json();
-	else
-		json["users"] = null;
-
 	return json;
 }
 
 // access with props.---
 // contains test values and comments
 export function View(props) {
-	const [cookies, setCookie, removeCookie] = useCookies(["session", "username"]);
+	const [cookies, setCookie, removeCookie] = useCookies(["session"]);
 	const json = useLoaderData();
 	const post = json["post"];
-	const users = json["users"];
 
-	if (post == null || users == null) {
+	if (post == null) {
 		return (
 			<div className="container">
-				<p>This post does not exist.</p>
+				<h1 className="external">This post does not exist.</h1>
 			</div>
 		);
 	}
 
-	const user = users[parseInt(post["UID"])];
-
 	return (
 		<div className="view-container">
 			<div className="view-lcol">
-				<Post view={true} post={post} users={users} />
+				<Post view={true} post={post} />
 			</div>
 			<div className="view-rcol">
 				{ post["Inters"] != null &&

@@ -11,25 +11,23 @@
 	transform: translateX(-50%);
 }
 h1.goblitz {
-	font-family: 'Noto Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;
 	font-weight: 900;
 	font-size: 16pt;
-	background-image: linear-gradient(90deg, #ff8040ff, #ff00ffff);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
+	color: black;
 }
 p.blitz {
 	font-weight: 400;
 	font-size: 10pt;
-	color: #d0d0d0;
+	color: #404040;
 }
 p.blitz b, p.blitz i {
 	font-weight: 900;
-	color: white;
+	color: black;
 }
 p.blitz b {
 	filter: drop-shadow(0 0 2px red);
 }
 p.blitz u, p.blitz a {
-	color: #d0d0ff;
+	color: #4040e0;
 }

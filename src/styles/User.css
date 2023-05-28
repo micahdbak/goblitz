@@ -1,29 +1,21 @@
-.user {
+.user-row {
 	display: flex;
-	justify-content: start;
+	justify-content: center;
 	align-items: center;
-	padding: 0;
-	width: fit-content;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	height: 64px;
 }
-.user img {
-	border-radius: 50%;
-	margin-right: 4px;
-	border: 1px solid black;
-	min-width: 0;
-	width: 24px;
-	height: 24px;
-}
-.user h2 {
+img.user-img {
 	display: block;
-	margin-right: 4px;
-	font-weight: 400;
-	font-size: 12pt;
-	line-height: 8px;
-	text-decoration: underline;
+	object-fit: cover;
+	margin-right: 8px;
+	border: 1px solid black;
+	border-radius: 24px;
+	width: 48px;
+	height: 48px;
 }
-.user h3 {
+h1.user-name {
 	font-weight: 400;
-	font-size: 12pt;
-	line-height: 8px;
-	color: gray;
+	font-size: 16pt;
 }

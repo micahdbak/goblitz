@@ -9,7 +9,7 @@ import { View, loadPost } from "./routes/View.js";
 import Login from "./routes/Login.js";
 import Register from "./routes/Register.js";
 import Create from "./routes/Create.js";
-import ViewProfile, { loadProfiles } from "./routes/ViewProfile.js";
+import Profile, { loadProfile } from "./routes/Profile.js";
 
 const router = createBrowserRouter([
 	{
@@ -36,8 +36,8 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "/u/:link",
-		loader: loadProfiles,
-		element: <ViewProfile />
+		loader: loadProfile,
+		element: <Profile />
 	}
 ]);
 
